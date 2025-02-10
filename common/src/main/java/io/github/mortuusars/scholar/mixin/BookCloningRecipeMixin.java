@@ -25,9 +25,9 @@ public class BookCloningRecipeMixin {
      * This mixin basically overrides whole method which may cause compatibility issues. But it would require more mixins to change it in specific parts.
      * Mods that modify this recipe should be very rare anyway.
      */
-    @Inject(method = "assemble(Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/core/RegistryAccess;)Lnet/minecraft/world/item/ItemStack;",
+    @Inject(method = "assemble(Lnet/minecraft/world/inventory/CraftingContainer;)Lnet/minecraft/world/item/ItemStack;",
             at = @At("HEAD"), cancellable = true)
-    private void onAssemble(CraftingContainer container, RegistryAccess registryAccess, CallbackInfoReturnable<ItemStack> cir) {
+    private void onAssemble(CraftingContainer container, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack inputBook = ItemStack.EMPTY;
         @Nullable Integer resultColor = null;
         int copies = 0;

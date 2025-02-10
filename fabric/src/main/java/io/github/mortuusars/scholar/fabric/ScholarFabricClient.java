@@ -1,7 +1,6 @@
 package io.github.mortuusars.scholar.fabric;
 
 import io.github.mortuusars.scholar.Scholar;
-import io.github.mortuusars.scholar.client.render.ChiseledBookShelfOverlay;
 import io.github.mortuusars.scholar.client.screen.LecternSpreadScreen;
 import io.github.mortuusars.scholar.book.BookColor;
 import net.fabricmc.api.ClientModInitializer;

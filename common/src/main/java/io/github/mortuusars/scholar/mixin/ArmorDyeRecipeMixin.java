@@ -21,28 +21,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ArmorDyeRecipeMixin {
     @Inject(method = "matches(Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/world/level/Level;)Z", at = @At("HEAD"), cancellable = true)
     private void onMatches(CraftingContainer container, Level level, CallbackInfoReturnable<Boolean> cir) {
-        for (ItemStack stack : container.getItems()) {
-            if (stack.is(Items.WRITABLE_BOOK) && !Config.Common.WRITABLE_BOOK_COLORING.get()) {
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            if (container.getItem(i).is(Items.WRITABLE_BOOK) && !Config.Common.WRITABLE_BOOK_COLORING.get()) {
                 cir.setReturnValue(false);
                 return;
             }
 
-            if (stack.is(Items.WRITTEN_BOOK) && !Config.Common.WRITTEN_BOOK_COLORING.get()) {
+            if (container.getItem(i).is(Items.WRITTEN_BOOK) && !Config.Common.WRITTEN_BOOK_COLORING.get()) {
                 cir.setReturnValue(false);
                 return;
             }
         }
     }
 
-    @Inject(method = "assemble(Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/core/RegistryAccess;)Lnet/minecraft/world/item/ItemStack;", at = @At("HEAD"), cancellable = true)
-    private void onAssemble(CraftingContainer container, RegistryAccess registryAccess, CallbackInfoReturnable<ItemStack> cir) {
-        for (ItemStack stack : container.getItems()) {
-            if (stack.is(Items.WRITABLE_BOOK) && !Config.Common.WRITABLE_BOOK_COLORING.get()) {
+    @Inject(method = "assemble(Lnet/minecraft/world/inventory/CraftingContainer;)Lnet/minecraft/world/item/ItemStack;", at = @At("HEAD"), cancellable = true)
+    private void onAssemble(CraftingContainer container, CallbackInfoReturnable<ItemStack> cir) {
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            if (container.getItem(i).is(Items.WRITABLE_BOOK) && !Config.Common.WRITABLE_BOOK_COLORING.get()) {
                 cir.setReturnValue(ItemStack.EMPTY);
                 return;
             }
 
-            if (stack.is(Items.WRITTEN_BOOK) && !Config.Common.WRITTEN_BOOK_COLORING.get()) {
+            if (container.getItem(i).is(Items.WRITTEN_BOOK) && !Config.Common.WRITTEN_BOOK_COLORING.get()) {
                 cir.setReturnValue(ItemStack.EMPTY);
                 return;
             }

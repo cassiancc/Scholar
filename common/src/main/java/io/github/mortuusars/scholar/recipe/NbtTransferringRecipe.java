@@ -26,7 +26,7 @@ public class NbtTransferringRecipe extends CustomRecipe {
     private final NonNullList<Ingredient> ingredients;
 
     public NbtTransferringRecipe(ResourceLocation id, Ingredient transferIngredient, NonNullList<Ingredient> ingredients, ItemStack result) {
-        super(id, CraftingBookCategory.MISC);
+        super(id);
         this.transferIngredient = transferIngredient;
         this.ingredients = ingredients;
         this.result = result;
@@ -47,7 +47,7 @@ public class NbtTransferringRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) {
+    public @NotNull ItemStack getResultItem() {
         return getResult();
     }
 
@@ -87,16 +87,16 @@ public class NbtTransferringRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(CraftingContainer container, @NotNull RegistryAccess registryAccess) {
+    public @NotNull ItemStack assemble(CraftingContainer container) {
         for (int index = 0; index < container.getContainerSize(); index++) {
             ItemStack itemStack = container.getItem(index);
 
             if (getTransferIngredient().test(itemStack)) {
-                return transferNbt(itemStack, getResultItem(registryAccess).copy());
+                return transferNbt(itemStack, getResultItem().copy());
             }
         }
 
-        return getResultItem(registryAccess);
+        return getResultItem();
     }
 
     public @NotNull ItemStack transferNbt(ItemStack transferIngredientStack, ItemStack recipeResultStack) {
@@ -118,7 +118,7 @@ public class NbtTransferringRecipe extends CustomRecipe {
     public static class Serializer implements RecipeSerializer<NbtTransferringRecipe> {
         @Override
         public @NotNull NbtTransferringRecipe fromJson(ResourceLocation recipeId, JsonObject serializedRecipe) {
-            Ingredient sourceIngredient = Ingredient.fromJson(GsonHelper.getNonNull(serializedRecipe, "source"));
+            Ingredient sourceIngredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(serializedRecipe, "source"));
             NonNullList<Ingredient> ingredients = getIngredients(GsonHelper.getAsJsonArray(serializedRecipe, "ingredients"));
             ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "result"));
 

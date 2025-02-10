@@ -2,11 +2,12 @@ package io.github.mortuusars.scholar.client.screen.textbox;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -114,7 +115,7 @@ public class TextBox extends AbstractWidget {
     protected DisplayCache getDisplayCache() {
         if (displayCache.needsRebuilding)
             displayCache.rebuild(font, getText(), textFieldHelper.getCursorPos(), textFieldHelper.getSelectionPos(),
-                    getX(), getY(), getWidth(), getHeight(), horizontalAlignment);
+                    x, y, getWidth(), getHeight(), horizontalAlignment);
         return displayCache;
     }
 
@@ -123,51 +124,51 @@ public class TextBox extends AbstractWidget {
     }
 
     protected Pos2i convertLocalToScreen(Pos2i pos) {
-        return new Pos2i(getX() + pos.x, getY() + pos.y);
+        return new Pos2i(x + pos.x, y + pos.y);
     }
 
     protected Pos2i convertScreenToLocal(Pos2i screenPos) {
-        return new Pos2i(screenPos.x - getX(), screenPos.y - getY());
+        return new Pos2i(screenPos.x - x, screenPos.y - y);
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
         DisplayCache displayCache = this.getDisplayCache();
         for (DisplayCache.LineInfo lineInfo : displayCache.lines) {
-            guiGraphics.drawString(this.font, lineInfo.asComponent, getX() + lineInfo.x, getY() + lineInfo.y, getCurrentFontColor(), false);
+            GuiComponent.drawString(guiGraphics, this.font, lineInfo.asComponent, x + lineInfo.x, y + lineInfo.y, getCurrentFontColor());
         }
         this.renderHighlight(guiGraphics, displayCache.selectionAreas);
         if (isFocused())
             this.renderCursor(guiGraphics, displayCache.cursorPos, displayCache.cursorAtEnd);
     }
 
-    protected void renderHighlight(GuiGraphics guiGraphics, Rect2i[] highlightAreas) {
+    protected void renderHighlight(PoseStack guiGraphics, Rect2i[] highlightAreas) {
         for (Rect2i selection : highlightAreas) {
-            int x = getX() + selection.getX();
-            int y = getY() + selection.getY();
-            int x1 = x + selection.getWidth();
-            int y1 = y + selection.getHeight();
-            guiGraphics.fill(RenderType.guiTextHighlight(), x, y - 1, x1, y1, isFocused() ? selectionColor : selectionUnfocusedColor);
+            int newX = x + selection.getX();
+            int newY = y + selection.getY();
+            int x1 = newX + selection.getWidth();
+            int y1 = newY + selection.getHeight();
+            GuiComponent.fill(guiGraphics, newX, newY - 1, x1, y1, isFocused() ? selectionColor : selectionUnfocusedColor);
         }
     }
 
-    protected void renderCursor(GuiGraphics guiGraphics, Pos2i cursorPos, boolean isEndOfText) {
+    protected void renderCursor(PoseStack guiGraphics, Pos2i cursorPos, boolean isEndOfText) {
         if (this.frameTick / 6 % 2 == 0) {
             cursorPos = convertLocalToScreen(cursorPos);
             if (isEndOfText)
-                guiGraphics.drawString(this.font, "_", cursorPos.x, cursorPos.y, getCurrentFontColor(), false);
+                GuiComponent.drawString(guiGraphics, this.font, "_", cursorPos.x, cursorPos.y, getCurrentFontColor());
             else {
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(0, 0, 50);
+                guiGraphics.pushPose();
+                guiGraphics.translate(0, 0, 50);
                 RenderSystem.disableBlend();
-                guiGraphics.fill(cursorPos.x, cursorPos.y - 1, cursorPos.x + 1, cursorPos.y + this.font.lineHeight, getCurrentFontColor());
-                guiGraphics.pose().popPose();
+                GuiComponent.fill(guiGraphics, cursorPos.x, cursorPos.y - 1, cursorPos.x + 1, cursorPos.y + this.font.lineHeight, getCurrentFontColor());
+                guiGraphics.popPose();
             }
         }
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.TITLE, createNarrationMessage());
     }
 

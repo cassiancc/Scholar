@@ -2,6 +2,7 @@ package io.github.mortuusars.scholar.client.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.scholar.Config;
 import io.github.mortuusars.scholar.Scholar;
@@ -9,10 +10,9 @@ import io.github.mortuusars.scholar.client.util.RenderUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.nbt.CompoundTag;
@@ -104,8 +104,7 @@ public class SpreadBookViewScreen extends Screen {
 
     protected void createMenuControls() {
         if (Config.Client.WRITTEN_SHOW_DONE_BUTTON.get()) {
-            this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE,
-                    (button) -> this.onClose()).bounds(this.width / 2 - 60, topPos + BOOK_HEIGHT + 12, 120, 20).build());
+            this.addRenderableWidget(new Button(this.width / 2 - 60, topPos + BOOK_HEIGHT + 12, 120, 20, CommonComponents.GUI_DONE, button -> this.onClose()));
         }
     }
 
@@ -190,17 +189,17 @@ public class SpreadBookViewScreen extends Screen {
         return false;
     }
 
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics);
 
         RenderUtil.withColorMultiplied(bookColor, () -> {
             // Cover
-            guiGraphics.blit(TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+            GuiComponent.blit(guiGraphics, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                     0, 0, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
         });
 
         // Pages
-        guiGraphics.blit(TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+        GuiComponent.blit(guiGraphics, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                 0, 180, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
 
         drawPageNumbers(guiGraphics, currentSpread);
@@ -222,26 +221,26 @@ public class SpreadBookViewScreen extends Screen {
 
         Style style = this.getClickedComponentStyleAt(mouseX, mouseY);
         if (style != null)
-            guiGraphics.renderComponentHoverEffect(this.font, style, mouseX, mouseY);
+            GuiComponent.renderComponentHoverEffect(this.font, style, mouseX, mouseY);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
-    protected void drawPageNumbers(GuiGraphics guiGraphics, int currentSpreadIndex) {
+    protected void drawPageNumbers(PoseStack poseStack, int currentSpreadIndex) {
         String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
-        guiGraphics.drawString(font, leftPageNumber, leftPos + 69 + (8 - font.width(leftPageNumber) / 2),
-                topPos + 157, secondaryFontColor, false);
+        GuiComponent.drawString(poseStack, font, leftPageNumber, leftPos + 69 + (8 - font.width(leftPageNumber) / 2),
+                topPos + 157, secondaryFontColor);
 
         String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
-        guiGraphics.drawString(font, rightPageNumber, leftPos + 208 + (8 - font.width(rightPageNumber) / 2),
-                topPos + 157, secondaryFontColor, false);
+        GuiComponent.drawString(poseStack, font, rightPageNumber, leftPos + 208 + (8 - font.width(rightPageNumber) / 2),
+                topPos + 157, secondaryFontColor);
     }
 
-    protected void drawPageContents(GuiGraphics guiGraphics, List<FormattedCharSequence> lines, int x, int y) {
+    protected void drawPageContents(PoseStack poseStack, List<FormattedCharSequence> lines, int x, int y) {
         int maxLines = Math.min(TEXT_HEIGHT / font.lineHeight, lines.size());
         for (int i = 0; i < maxLines; ++i) {
             FormattedCharSequence text = lines.get(i);
-            guiGraphics.drawString(font, text, x, y + i * font.lineHeight, mainFontColor, false);
+            GuiComponent.drawString(poseStack, font, text, x, y + i * font.lineHeight, mainFontColor);
         }
     }
 

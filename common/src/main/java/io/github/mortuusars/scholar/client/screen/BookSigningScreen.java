@@ -1,6 +1,7 @@
 package io.github.mortuusars.scholar.client.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.scholar.Config;
 import io.github.mortuusars.scholar.Scholar;
 import io.github.mortuusars.scholar.client.screen.textbox.HorizontalAlignment;
@@ -9,9 +10,8 @@ import io.github.mortuusars.scholar.client.util.RenderUtil;
 import io.github.mortuusars.scholar.book.Formatting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.CommonComponents;
@@ -118,32 +118,32 @@ public class BookSigningScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
         updateButtons();
 
         renderBackground(guiGraphics);
 
         RenderUtil.withColorMultiplied(bookColor, () -> {
-            guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, 0,
-                    imageWidth, imageHeight, textureWidth, textureHeight);
+            GuiComponent.blit(guiGraphics, leftPos, topPos, 0, 0, 0,
+                    imageWidth, imageHeight, textureHeight, textureWidth);
         });
 
-        guiGraphics.blit(TEXTURE, leftPos, topPos + 31, 0, 0, 180,
-                imageWidth, 76, textureWidth, textureHeight);
+        GuiComponent.blit(guiGraphics, leftPos, topPos + 31, 0, 0, 180,
+                imageWidth, 76, textureHeight, textureWidth);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         renderLabels(guiGraphics);
     }
 
-    private void renderLabels(GuiGraphics guiGraphics) {
+    private void renderLabels(PoseStack guiGraphics) {
         MutableComponent component = Component.translatable("book.editTitle");
-        guiGraphics.drawString(font, component,  leftPos + 149 / 2 - font.width(component) / 2, topPos + 51,
-                enterBookTitleFontColor, false);
+        GuiComponent.drawString(guiGraphics, font, component,  leftPos + 149 / 2 - font.width(component) / 2, topPos + 51,
+                enterBookTitleFontColor);
 
         component = Component.translatable("book.byAuthor", player.getName());
-        guiGraphics.drawString(font, component, leftPos + 149 / 2 - font.width(component) / 2, topPos + 81,
-                byAuthorFontColor, false);
+        GuiComponent.drawString(guiGraphics, font, component, leftPos + 149 / 2 - font.width(component) / 2, topPos + 81,
+                byAuthorFontColor);
     }
 
     protected void signAlbum() {

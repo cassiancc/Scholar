@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.scholar.Config;
 import io.github.mortuusars.scholar.Scholar;
@@ -16,10 +17,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
@@ -281,7 +281,7 @@ public class SpreadBookEditScreen extends Screen {
 
     }
 
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics);
 
         if (insertSectionSignButton != null)
@@ -289,16 +289,16 @@ public class SpreadBookEditScreen extends Screen {
 
         RenderUtil.withColorMultiplied(bookColor, () -> {
             // Cover
-            guiGraphics.blit(TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+            GuiComponent.blit(guiGraphics, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                     0, 0, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
 
             // Enter Sign Mode BG
-            guiGraphics.blit(TEXTURE, leftPos - 29, topPos + 14, 0, 360,
+            GuiComponent.blit(guiGraphics, leftPos - 29, topPos + 14, 0, 360,
                     29, 28, 512, 512);
         });
 
         // Pages
-        guiGraphics.blit(TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+        GuiComponent.blit(guiGraphics, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                 0, 180, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
 
         drawPageNumbers(guiGraphics, currentSpread);
@@ -306,14 +306,14 @@ public class SpreadBookEditScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
-    protected void drawPageNumbers(GuiGraphics guiGraphics, int currentSpreadIndex) {
+    protected void drawPageNumbers(PoseStack guiGraphics, int currentSpreadIndex) {
         String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
-        guiGraphics.drawString(font, leftPageNumber, leftPos + 69 + (8 - font.width(leftPageNumber) / 2),
-                topPos + 157, secondaryFontColor, false);
+        GuiComponent.drawString(guiGraphics, font, leftPageNumber, leftPos + 69 + (8 - font.width(leftPageNumber) / 2),
+                topPos + 157, secondaryFontColor);
 
         String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
-        guiGraphics.drawString(font, rightPageNumber, leftPos + 208 + (8 - font.width(rightPageNumber) / 2),
-                topPos + 157, secondaryFontColor, false);
+        GuiComponent.drawString(guiGraphics, font, rightPageNumber, leftPos + 208 + (8 - font.width(rightPageNumber) / 2),
+                topPos + 157, secondaryFontColor);
     }
 
     @Override
@@ -325,7 +325,7 @@ public class SpreadBookEditScreen extends Screen {
             return true;
         }
 
-        if (insertSectionSignButton != null && insertSectionSignButton.isHovered() && keyCode == InputConstants.KEY_F1) {
+        if (insertSectionSignButton != null && insertSectionSignButton.isHoveredOrFocused() && keyCode == InputConstants.KEY_F1) {
             openFormattingWikiPage();
             return true;
         }
@@ -416,7 +416,7 @@ public class SpreadBookEditScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (insertSectionSignButton != null && insertSectionSignButton.isHovered()) {
+        if (insertSectionSignButton != null && insertSectionSignButton.isHoveredOrFocused()) {
             insertSectionSign();
             return true;
         }
