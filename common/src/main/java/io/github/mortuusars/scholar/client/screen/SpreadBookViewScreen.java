@@ -231,11 +231,11 @@ public class SpreadBookViewScreen extends Screen {
 
     protected void drawPageNumbers(PoseStack poseStack, int currentSpreadIndex) {
         String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
-        GuiComponent.drawString(poseStack, font, leftPageNumber, leftPos + 69 + (8 - font.width(leftPageNumber) / 2),
+        font.draw(poseStack, leftPageNumber, leftPos + 69 + (8 - (float) font.width(leftPageNumber) / 2),
                 topPos + 157, secondaryFontColor);
 
         String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
-        GuiComponent.drawString(poseStack, font, rightPageNumber, leftPos + 208 + (8 - font.width(rightPageNumber) / 2),
+        font.draw(poseStack, rightPageNumber, leftPos + 208 + (8 - (float) font.width(rightPageNumber) / 2),
                 topPos + 157, secondaryFontColor);
     }
 
@@ -243,7 +243,7 @@ public class SpreadBookViewScreen extends Screen {
         int maxLines = Math.min(TEXT_HEIGHT / font.lineHeight, lines.size());
         for (int i = 0; i < maxLines; ++i) {
             FormattedCharSequence text = lines.get(i);
-            GuiComponent.drawString(poseStack, font, text, x, y + i * font.lineHeight, mainFontColor);
+            font.draw(poseStack, text, x, y + i * font.lineHeight, mainFontColor);
         }
     }
 

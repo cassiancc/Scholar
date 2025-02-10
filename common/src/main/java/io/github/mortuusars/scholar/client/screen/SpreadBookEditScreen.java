@@ -310,11 +310,11 @@ public class SpreadBookEditScreen extends Screen {
 
     protected void drawPageNumbers(PoseStack guiGraphics, int currentSpreadIndex) {
         String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
-        GuiComponent.drawString(guiGraphics, font, leftPageNumber, leftPos + 69 + (8 - font.width(leftPageNumber) / 2),
+        font.draw(guiGraphics, leftPageNumber, leftPos + 69 + (8 - (float) font.width(leftPageNumber) / 2),
                 topPos + 157, secondaryFontColor);
 
         String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
-        GuiComponent.drawString(guiGraphics, font, rightPageNumber, leftPos + 208 + (8 - font.width(rightPageNumber) / 2),
+        font.draw(guiGraphics, rightPageNumber, leftPos + 208 + (8 - (float) font.width(rightPageNumber) / 2),
                 topPos + 157, secondaryFontColor);
     }
 

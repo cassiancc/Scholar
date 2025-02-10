@@ -135,7 +135,7 @@ public class TextBox extends AbstractWidget {
     public void render(PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
         DisplayCache displayCache = this.getDisplayCache();
         for (DisplayCache.LineInfo lineInfo : displayCache.lines) {
-            GuiComponent.drawString(guiGraphics, this.font, lineInfo.asComponent, x + lineInfo.x, y + lineInfo.y, getCurrentFontColor());
+            font.draw(guiGraphics, lineInfo.asComponent, x + lineInfo.x, y + lineInfo.y, getCurrentFontColor());
         }
         this.renderHighlight(guiGraphics, displayCache.selectionAreas);
         if (isFocused())
@@ -156,7 +156,7 @@ public class TextBox extends AbstractWidget {
         if (this.frameTick / 6 % 2 == 0) {
             cursorPos = convertLocalToScreen(cursorPos);
             if (isEndOfText)
-                GuiComponent.drawString(guiGraphics, this.font, "_", cursorPos.x, cursorPos.y, getCurrentFontColor());
+                font.draw(guiGraphics, "_", cursorPos.x, cursorPos.y, getCurrentFontColor());
             else {
                 guiGraphics.pushPose();
                 guiGraphics.translate(0, 0, 50);
@@ -227,7 +227,7 @@ public class TextBox extends AbstractWidget {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isHovered && visible && isActive() && button == 0) {
+        if (isMouseOver(mouseX, mouseY) && visible && isActive() && button == 0) {
             long currentTime = Util.getMillis();
             DisplayCache displayCache = getDisplayCache();
             int index = displayCache.getIndexAtPosition(font, convertScreenToLocal(new Pos2i((int) mouseX, (int) mouseY)));
