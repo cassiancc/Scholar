@@ -185,8 +185,8 @@ public class SpreadBookEditScreen extends Screen {
 
     protected void createMenuControls() {
         if (Config.Client.WRITABLE_SHOW_DONE_BUTTON.get()) {
-            this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE,
-                    (button) -> this.onClose()).bounds(this.width / 2 - 60, topPos + BOOK_HEIGHT + 12, 120, 20).build());
+            this.addRenderableWidget(new Button(this.width / 2 - 60, topPos + BOOK_HEIGHT + 12, 120, 20, CommonComponents.GUI_DONE,
+                    button -> this.onClose()));
         }
     }
 
