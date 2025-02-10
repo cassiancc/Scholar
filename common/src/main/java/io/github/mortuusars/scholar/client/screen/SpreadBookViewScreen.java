@@ -2,6 +2,7 @@ package io.github.mortuusars.scholar.client.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.scholar.Config;
@@ -112,12 +113,12 @@ public class SpreadBookViewScreen extends Screen {
         ImageButton prevButton = new ImageButton(leftPos + 12, topPos + 156, 13, 15,
                 295, 0, 15, TEXTURE, 512, 512,
                 (button) -> this.pageBack());
-        prevButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.previous_page")));
+//        prevButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.previous_page")));
         this.prevButton = this.addRenderableWidget(prevButton);
         ImageButton nextButton = new ImageButton(leftPos + 270, topPos + 156, 13, 15,
                 308, 0, 15, TEXTURE, 512, 512,
                 (button) -> this.pageForward());
-        nextButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.next_page")));
+//        nextButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.next_page")));
         this.nextButton = this.addRenderableWidget(nextButton);
         this.updateButtonVisibility();
     }
@@ -192,6 +193,8 @@ public class SpreadBookViewScreen extends Screen {
     public void render(@NotNull PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics);
 
+        RenderSystem.setShaderTexture(0, TEXTURE);
+
         RenderUtil.withColorMultiplied(bookColor, () -> {
             // Cover
             GuiComponent.blit(guiGraphics, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
@@ -220,8 +223,8 @@ public class SpreadBookViewScreen extends Screen {
         drawPageContents(guiGraphics, this.cachedPageComponents.getSecond(), leftPos + TEXT_RIGHT_X, topPos + TEXT_Y);
 
         Style style = this.getClickedComponentStyleAt(mouseX, mouseY);
-        if (style != null)
-            GuiComponent.renderComponentHoverEffect(this.font, style, mouseX, mouseY);
+//        if (style != null)
+//            GuiComponent.renderComponentHoverEffect(this.font, style, mouseX, mouseY);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }

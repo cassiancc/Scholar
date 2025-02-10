@@ -1,6 +1,7 @@
 package io.github.mortuusars.scholar.client.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.scholar.Config;
 import io.github.mortuusars.scholar.Scholar;
@@ -86,14 +87,14 @@ public class BookSigningScreen extends Screen {
                 b -> signAlbum(), Component.translatable("book.finalizeButton"));
         MutableComponent component = Component.translatable("book.finalizeButton")
                 .append("\n").append(Component.translatable("book.finalizeWarning").withStyle(ChatFormatting.GRAY));
-        signButton.setTooltip(Tooltip.create(component));
+//        signButton.setTooltip(Tooltip.create(component));
         addRenderableWidget(signButton);
 
         // CANCEL
         cancelSigningButton = new ImageButton(leftPos + 83, topPos + 108, 22, 22, 171, 0,
                 22, TEXTURE, textureWidth, textureHeight,
                 b -> cancelSigning(), CommonComponents.GUI_CANCEL);
-        cancelSigningButton.setTooltip(Tooltip.create(CommonComponents.GUI_CANCEL));
+//        cancelSigningButton.setTooltip(Tooltip.create(CommonComponents.GUI_CANCEL));
         addRenderableWidget(cancelSigningButton);
 
         setInitialFocus(titleTextBox);
@@ -123,6 +124,7 @@ public class BookSigningScreen extends Screen {
 
         renderBackground(guiGraphics);
 
+        RenderSystem.setShaderTexture(0, TEXTURE);
         RenderUtil.withColorMultiplied(bookColor, () -> {
             GuiComponent.blit(guiGraphics, leftPos, topPos, 0, 0, 0,
                     imageWidth, imageHeight, textureHeight, textureWidth);

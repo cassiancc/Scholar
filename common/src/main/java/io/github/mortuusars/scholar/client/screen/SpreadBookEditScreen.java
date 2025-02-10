@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.scholar.Config;
@@ -144,19 +145,19 @@ public class SpreadBookEditScreen extends Screen {
         ImageButton prevButton = new ImageButton(leftPos + 12, topPos + 156, 13, 15,
                 295, 0, 15, TEXTURE, 512, 512,
                 (button) -> this.pageBack());
-        prevButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.previous_page")));
+//        prevButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.previous_page")));
         this.prevButton = addRenderableWidget(prevButton);
 
         ImageButton nextButton = new ImageButton(leftPos + 270, topPos + 156, 13, 15,
                 308, 0, 15, TEXTURE, 512, 512,
                 (button) -> this.pageForward());
-        nextButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.next_page")));
+//        nextButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.next_page")));
         this.nextButton = addRenderableWidget(nextButton);
 
         this.enterSignModeButton = new ImageButton(leftPos - 24, topPos + 18, 22, 22, 321, 0,
                 22, TEXTURE, 512, 512,
                 b -> enterSignMode(), Component.translatable("book.signButton"));
-        this.enterSignModeButton.setTooltip(Tooltip.create(Component.translatable("book.signButton")));
+//        this.enterSignModeButton.setTooltip(Tooltip.create(Component.translatable("book.signButton")));
         addRenderableWidget(this.enterSignModeButton);
 
         if (isFormattingAllowed()) {
@@ -174,7 +175,7 @@ public class SpreadBookEditScreen extends Screen {
                     .append(Component.translatable("gui.scholar.insert_section_sign.help2",
                                     Component.literal("F1").withStyle(ChatFormatting.GRAY))
                             .withStyle(ChatFormatting.DARK_GRAY)));
-            this.insertSectionSignButton.setTooltip(Tooltip.create(tooltip));
+//            this.insertSectionSignButton.setTooltip(Tooltip.create(tooltip));
             addRenderableOnly(this.insertSectionSignButton);
         }
 
@@ -287,6 +288,7 @@ public class SpreadBookEditScreen extends Screen {
         if (insertSectionSignButton != null)
             insertSectionSignButton.active = getFocused() instanceof TextBox;
 
+        RenderSystem.setShaderTexture(0,  TEXTURE);
         RenderUtil.withColorMultiplied(bookColor, () -> {
             // Cover
             GuiComponent.blit(guiGraphics, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
