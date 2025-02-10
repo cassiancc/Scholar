@@ -15,6 +15,5 @@ public class ScholarFabricClient implements ClientModInitializer {
         ColorProviderRegistry.ITEM.register(BookColor::getTintColor, Items.WRITABLE_BOOK);
         ColorProviderRegistry.ITEM.register(BookColor::getTintColor, Items.WRITTEN_BOOK);
         MenuScreens.register(Scholar.MenuTypes.LECTERN.get(), LecternSpreadScreen::new);
-        HudRenderCallback.EVENT.register(ChiseledBookShelfOverlay::render);
     }
 }

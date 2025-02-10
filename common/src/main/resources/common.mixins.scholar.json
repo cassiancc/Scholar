@@ -9,9 +9,7 @@
     "BookCloningRecipeMixin",
     "LecternBlockMixin",
     "WritableBookItemMixin",
-    "WrittenBookItemMixin",
-    "chiseled_bookshelf_tooltip.BlockEntityParentMixin",
-    "chiseled_bookshelf_tooltip.ChiseledBookShelfBlockEntityMixin"
+    "WrittenBookItemMixin"
   ],
   "injectors": {
     "defaultRequire": -1

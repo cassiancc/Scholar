@@ -31,12 +31,4 @@ public class ClientEvents {
             event.register(BookColor::getTintColor, Items.WRITTEN_BOOK);
         }
     }
-
-    @Mod.EventBusSubscriber(modid = Scholar.ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-    public static class ForgeBus {
-        @SubscribeEvent
-        public static void onRenderGuiPost(RenderGuiEvent.Post event) {
-            ChiseledBookShelfOverlay.render(event.getGuiGraphics(), event.getPartialTick());
-        }
-    }
 }
