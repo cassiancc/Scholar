@@ -72,7 +72,7 @@ public class Scholar {
             Preconditions.checkState(category != null && !category.isEmpty(), "'category' should not be empty.");
             Preconditions.checkState(key != null && !key.isEmpty(), "'key' should not be empty.");
             String path = category + "." + key;
-            return Register.soundEvent(path, () -> SoundEvent.createVariableRangeEvent(Scholar.resource(path)));
+            return Register.soundEvent(path, () -> new SoundEvent(Scholar.resource(path)));
         }
 
         static void init() { }
