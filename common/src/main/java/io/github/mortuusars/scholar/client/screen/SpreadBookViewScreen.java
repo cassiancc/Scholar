@@ -112,14 +112,11 @@ public class SpreadBookViewScreen extends Screen {
     protected void createPageControlButtons() {
         ImageButton prevButton = new ImageButton(leftPos + 12, topPos + 156, 13, 15,
                 295, 0, 15, TEXTURE, 512, 512,
-                (button) -> this.pageBack());
-
-//        prevButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.previous_page")));
+                (button) -> this.pageBack(), ((button, poseStack, i, j) -> this.renderTooltip(poseStack, Component.translatable("spectatorMenu.previous_page"), i, j)), null);
         this.prevButton = this.addRenderableWidget(prevButton);
         ImageButton nextButton = new ImageButton(leftPos + 270, topPos + 156, 13, 15,
                 308, 0, 15, TEXTURE, 512, 512,
-                (button) -> this.pageForward());
-//        nextButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.next_page")));
+                (button) -> this.pageForward(), ((button, poseStack, i, j) -> this.renderTooltip(poseStack, Component.translatable("spectatorMenu.next_page"), i, j)), null);
         this.nextButton = this.addRenderableWidget(nextButton);
         this.updateButtonVisibility();
     }

@@ -30,7 +30,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ServerboundEditBookPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -144,38 +143,33 @@ public class SpreadBookEditScreen extends Screen {
 
         ImageButton prevButton = new ImageButton(leftPos + 12, topPos + 156, 13, 15,
                 295, 0, 15, TEXTURE, 512, 512,
-                (button) -> this.pageBack());
-//        prevButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.previous_page")));
+                (button) -> this.pageBack(), (button, poseStack, x, y) -> this.renderTooltip(poseStack, Component.translatable("spectatorMenu.previous_page"), x, y), null);
         this.prevButton = addRenderableWidget(prevButton);
 
         ImageButton nextButton = new ImageButton(leftPos + 270, topPos + 156, 13, 15,
                 308, 0, 15, TEXTURE, 512, 512,
-                (button) -> this.pageForward());
-//        nextButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.next_page")));
+                (button) -> this.pageForward(), (button, poseStack, x, y) -> this.renderTooltip(poseStack, Component.translatable("spectatorMenu.next_page"), x, y), null);
         this.nextButton = addRenderableWidget(nextButton);
 
         this.enterSignModeButton = new ImageButton(leftPos - 24, topPos + 18, 22, 22, 321, 0,
                 22, TEXTURE, 512, 512,
-                b -> enterSignMode(), Component.translatable("book.signButton"));
-//        this.enterSignModeButton.setTooltip(Tooltip.create(Component.translatable("book.signButton")));
+                b -> enterSignMode(), (button, poseStack, x, y) -> this.renderTooltip(poseStack, Component.translatable("book.signButton"), x, y), Component.translatable("book.signButton"));
         addRenderableWidget(this.enterSignModeButton);
 
         if (isFormattingAllowed()) {
+            ArrayList<Component> tooltip = new ArrayList<>();
+            tooltip.add(Component.translatable("gui.scholar.insert_section_sign")
+                .append(Component.literal(" [").withStyle(ChatFormatting.DARK_GRAY)
+                        .append(Component.literal("CTRL+F").withStyle(ChatFormatting.GRAY))
+                        .append(Component.literal("]").withStyle(ChatFormatting.DARK_GRAY))));
+            tooltip.add(Component.translatable("gui.scholar.insert_section_sign.help1")
+                    .withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("gui.scholar.insert_section_sign.help2",
+                            Component.literal("F1").withStyle(ChatFormatting.GRAY))
+                    .withStyle(ChatFormatting.DARK_GRAY));
             this.insertSectionSignButton = new ImageButton(width - 22, 2, 22, 22, 343, 0,
                     22, TEXTURE, 512, 512,
-                    b -> insertSectionSign(), Component.translatable("gui.scholar.insert_section_sign"));
-            MutableComponent tooltip = Component.translatable("gui.scholar.insert_section_sign")
-                    .append(Component.literal(" [").withStyle(ChatFormatting.DARK_GRAY)
-                        .append(Component.literal("CTRL+F").withStyle(ChatFormatting.GRAY))
-                        .append(Component.literal("]").withStyle(ChatFormatting.DARK_GRAY))
-                    .append("\n\n")
-                    .append(Component.translatable("gui.scholar.insert_section_sign.help1")
-                            .withStyle(ChatFormatting.GRAY))
-                    .append("\n\n")
-                    .append(Component.translatable("gui.scholar.insert_section_sign.help2",
-                                    Component.literal("F1").withStyle(ChatFormatting.GRAY))
-                            .withStyle(ChatFormatting.DARK_GRAY)));
-//            this.insertSectionSignButton.setTooltip(Tooltip.create(tooltip));
+                    b -> insertSectionSign(), (button, poseStack, x, y) -> this.renderTooltip(poseStack, tooltip, Optional.empty(), x, y), Component.translatable("gui.scholar.insert_section_sign"));
             addRenderableOnly(this.insertSectionSignButton);
         }
 

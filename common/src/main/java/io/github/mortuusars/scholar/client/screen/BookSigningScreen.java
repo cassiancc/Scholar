@@ -82,19 +82,17 @@ public class BookSigningScreen extends Screen {
         addRenderableWidget(titleTextBox);
 
         // SIGN
-        signButton = new ImageButton(leftPos + 46, topPos + 108, 22, 22, 149, 0,
-                22, TEXTURE, textureWidth, textureHeight,
-                b -> signAlbum(), Component.translatable("book.finalizeButton"));
         MutableComponent component = Component.translatable("book.finalizeButton")
                 .append("\n").append(Component.translatable("book.finalizeWarning").withStyle(ChatFormatting.GRAY));
-//        signButton.setTooltip(Tooltip.create(component));
+        signButton = new ImageButton(leftPos + 46, topPos + 108, 22, 22, 149, 0,
+                22, TEXTURE, textureWidth, textureHeight,
+                b -> signAlbum(), (button, poseStack, x, y) -> this.renderTooltip(poseStack, component, x, y), Component.translatable("book.finalizeButton"));
         addRenderableWidget(signButton);
 
         // CANCEL
         cancelSigningButton = new ImageButton(leftPos + 83, topPos + 108, 22, 22, 171, 0,
                 22, TEXTURE, textureWidth, textureHeight,
-                b -> cancelSigning(), CommonComponents.GUI_CANCEL);
-//        cancelSigningButton.setTooltip(Tooltip.create(CommonComponents.GUI_CANCEL));
+                b -> cancelSigning(), (button, poseStack, x, y) -> this.renderTooltip(poseStack, CommonComponents.GUI_CANCEL, x, y), CommonComponents.GUI_CANCEL);
         addRenderableWidget(cancelSigningButton);
 
         setInitialFocus(titleTextBox);
