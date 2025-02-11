@@ -113,6 +113,7 @@ public class SpreadBookViewScreen extends Screen {
         ImageButton prevButton = new ImageButton(leftPos + 12, topPos + 156, 13, 15,
                 295, 0, 15, TEXTURE, 512, 512,
                 (button) -> this.pageBack());
+
 //        prevButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.previous_page")));
         this.prevButton = this.addRenderableWidget(prevButton);
         ImageButton nextButton = new ImageButton(leftPos + 270, topPos + 156, 13, 15,
@@ -190,22 +191,22 @@ public class SpreadBookViewScreen extends Screen {
         return false;
     }
 
-    public void render(@NotNull PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(poseStack);
 
         RenderSystem.setShaderTexture(0, TEXTURE);
 
         RenderUtil.withColorMultiplied(bookColor, () -> {
             // Cover
-            GuiComponent.blit(guiGraphics, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+            GuiComponent.blit(poseStack, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                     0, 0, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
         });
 
         // Pages
-        GuiComponent.blit(guiGraphics, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+        GuiComponent.blit(poseStack, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                 0, 180, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
 
-        drawPageNumbers(guiGraphics, currentSpread);
+        drawPageNumbers(poseStack, currentSpread);
 
         if (this.cachedSpread != this.currentSpread) {
             FormattedText leftFormattedText = this.bookAccess.getPage(this.currentSpread * 2);
@@ -219,14 +220,14 @@ public class SpreadBookViewScreen extends Screen {
 
         this.cachedSpread = this.currentSpread;
 
-        drawPageContents(guiGraphics, this.cachedPageComponents.getFirst(), leftPos + TEXT_LEFT_X, topPos + TEXT_Y);
-        drawPageContents(guiGraphics, this.cachedPageComponents.getSecond(), leftPos + TEXT_RIGHT_X, topPos + TEXT_Y);
+        drawPageContents(poseStack, this.cachedPageComponents.getFirst(), leftPos + TEXT_LEFT_X, topPos + TEXT_Y);
+        drawPageContents(poseStack, this.cachedPageComponents.getSecond(), leftPos + TEXT_RIGHT_X, topPos + TEXT_Y);
 
         Style style = this.getClickedComponentStyleAt(mouseX, mouseY);
-//        if (style != null)
-//            GuiComponent.renderComponentHoverEffect(this.font, style, mouseX, mouseY);
+        if (style != null)
+            this.renderComponentHoverEffect(poseStack, style, mouseX, mouseY);
 
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.render(poseStack, mouseX, mouseY, partialTick);
     }
 
     protected void drawPageNumbers(PoseStack poseStack, int currentSpreadIndex) {
