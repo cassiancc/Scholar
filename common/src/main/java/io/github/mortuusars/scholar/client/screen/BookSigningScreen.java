@@ -22,7 +22,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 public class BookSigningScreen extends Screen {
     public static final int SELECTION_COLOR = 0xFF8888FF;
@@ -82,11 +84,12 @@ public class BookSigningScreen extends Screen {
         addRenderableWidget(titleTextBox);
 
         // SIGN
-        MutableComponent component = Component.translatable("book.finalizeButton")
-                .append("\n").append(Component.translatable("book.finalizeWarning").withStyle(ChatFormatting.GRAY));
+        ArrayList<Component> components = new ArrayList<>();
+        components.add(Component.translatable("book.finalizeButton").withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("book.finalizeWarning").withStyle(ChatFormatting.GRAY));
         signButton = new ImageButton(leftPos + 46, topPos + 108, 22, 22, 149, 0,
                 22, TEXTURE, textureWidth, textureHeight,
-                b -> signAlbum(), (button, poseStack, x, y) -> this.renderTooltip(poseStack, component, x, y), Component.translatable("book.finalizeButton"));
+                b -> signAlbum(), (button, poseStack, x, y) -> this.renderTooltip(poseStack, components, Optional.empty(), x, y), Component.translatable("book.finalizeButton"));
         addRenderableWidget(signButton);
 
         // CANCEL
