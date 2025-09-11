@@ -15,3 +15,4 @@ accessible field net/minecraft/client/gui/font/TextFieldHelper selectionPos I
 extendable method net/minecraft/client/gui/font/TextFieldHelper resetSelectionIfNeeded (Z)V
 
 accessible field net/minecraft/world/level/block/entity/LecternBlockEntity pageCount I
+accessible method net/minecraft/core/cauldron/CauldronInteraction dyedItemIteration (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/InteractionResult;

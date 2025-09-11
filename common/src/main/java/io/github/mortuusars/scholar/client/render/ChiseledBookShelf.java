@@ -12,6 +12,7 @@ import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -132,14 +133,14 @@ public class ChiseledBookShelf {
         int x = minecraft.getWindow().getGuiScaledWidth() / 2 + 16;
         int y = minecraft.getWindow().getGuiScaledHeight() / 2 - 9;
 
-        TooltipRenderUtil.renderTooltipBackground(guiGraphics, x, y, 18, 18, 400);
+        TooltipRenderUtil.renderTooltipBackground(guiGraphics, x, y, 18, 18, ResourceLocation.withDefaultNamespace("tooltip/background"));
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 400);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(0, 0);
         guiGraphics.renderItem(bookStack, x + 1, y + 1);
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
-        guiGraphics.renderTooltip(minecraft.font, bookStack, x + 16, y + 12);
+        guiGraphics.setTooltipForNextFrame(minecraft.font, bookStack, x + 16, y + 12);
     }
 
     // --
@@ -152,8 +153,8 @@ public class ChiseledBookShelf {
         if (Mods.WOODSTER.isLoading()) WoodsterIntegration.registerBlockColors(consumer);
     }
 
-    public static void setBookshelfRenderLayer(BiConsumer<Block, RenderType> consumer) {
-        consumer.accept(Blocks.CHISELED_BOOKSHELF, RenderType.cutout());
+    public static void setBookshelfRenderLayer(BiConsumer<Block, ChunkSectionLayer> consumer) {
+        consumer.accept(Blocks.CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
 
         if (Mods.MCBV.isLoading()) MoreChiseledBookshelfVariantsIntegration.setRenderLayer(consumer);
         if (Mods.WOODWORKS.isLoading()) WoodworksIntegration.setRenderLayer(consumer);

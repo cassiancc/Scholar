@@ -123,22 +123,23 @@ public class SpreadBookViewScreen extends SpreadBookScreen {
         if (clickEvent == null)
             return false;
 
-        if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
-            String pageNumber = clickEvent.getValue();
+        if (clickEvent.action() == ClickEvent.Action.CHANGE_PAGE) {
+            return false; //FIXME
+//            String pageNumber = clickEvent.action().getValue();
 
-            try {
-                int pageIndex = Integer.parseInt(pageNumber) - 1;
-                boolean pageChanged = this.setPage(pageIndex);
-                if (pageChanged) {
-                    playPageTurnSound();
-                }
-                return pageChanged;
-            } catch (Exception var5) {
-                return false;
-            }
+//            try {
+//                int pageIndex = Integer.parseInt(pageNumber) - 1;
+//                boolean pageChanged = this.setPage(pageIndex);
+//                if (pageChanged) {
+//                    playPageTurnSound();
+//                }
+//                return pageChanged;
+//            } catch (Exception var5) {
+//                return false;
+//            }
         } else {
             boolean handled = super.handleComponentClicked(style);
-            if (handled && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
+            if (handled && clickEvent.action() == ClickEvent.Action.RUN_COMMAND) {
                 this.onClose();
             }
 

@@ -14,7 +14,6 @@ import io.github.mortuusars.scholar.client.gui.widget.textbox.text.FormattedStri
 import io.github.mortuusars.scholar.util.Change;
 import io.github.mortuusars.scholar.client.util.FileDialogs;
 import io.github.mortuusars.scholar.util.History;
-import io.github.mortuusars.scholar.client.util.RenderUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,6 +21,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.game.ServerboundEditBookPacket;
@@ -218,24 +218,22 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
 
     @Override
     protected void renderBook(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        RenderUtil.withColorMultiplied(bookColor, () -> {
-            if (isToolsVisible()) {
-                // Import/Export buttons BG
-                guiGraphics.blit(TEXTURE, leftPos + 295, topPos + 14, 0, 388,
-                        23, 48, 512, 512);
-            }
+        if (isToolsVisible()) {
+            // Import/Export buttons BG
+            guiGraphics.blit(TEXTURE, leftPos + 295, topPos + 14, 0, 388,
+                    23, 48, 512, 512);
+        }
 
-            // Cover
-            guiGraphics.blit(TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
-                    0, 0, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
+        // Cover
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, 0, 0,
+                BOOK_WIDTH, BOOK_HEIGHT, BOOK_WIDTH, BOOK_HEIGHT, 512, 512, bookColor);
 
-            // Enter Sign Mode button BG
-            guiGraphics.blit(TEXTURE, leftPos - 29, topPos + 14, 0, 360,
-                    29, 28, 512, 512);
-        });
+        // Enter Sign Mode button BG
+        guiGraphics.blit(TEXTURE, leftPos - 29, topPos + 14, 0, 360,
+                29, 28, 512, 512);
 
         // Paper
-        guiGraphics.blit(TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2,
                 0, 180, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
     }
 
@@ -253,7 +251,7 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
             tooltip.add(Component.translatable("gui.scholar.tools.tooltip.paste_with_formatting"));
             tooltip.add(Component.translatable("gui.scholar.tools.tooltip.undo"));
             tooltip.add(Component.translatable("gui.scholar.tools.tooltip.redo"));
-            guiGraphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY + 20);
+            guiGraphics.setTooltipForNextFrame(font, tooltip, Optional.empty(), mouseX, mouseY + 20);
         }
     }
 
@@ -487,7 +485,7 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
     }
 
     protected void sendChanges(@Nullable String title) {
-        int slotId = hand == InteractionHand.MAIN_HAND ? player.getInventory().selected : 40;
+        int slotId = hand == InteractionHand.MAIN_HAND ? player.getInventory().getSelectedSlot() : 40;
         Objects.requireNonNull(minecraft.getConnection()).send(
                 new ServerboundEditBookPacket(slotId, this.pages, Optional.ofNullable(title)));
     }
@@ -648,7 +646,7 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
                     Files.writeString(Path.of(filePath), content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                     MutableComponent filePathComponent = Component.literal(filePath).withStyle(Style.EMPTY
                             .withUnderlined(true)
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, filePath)));
+                            .withClickEvent(() -> ClickEvent.Action.OPEN_FILE));
                     Minecraft.getInstance().execute(() -> player.displayClientMessage(
                             Component.translatable("gui.scholar.export_book.success")
                                     .append(filePathComponent), false));

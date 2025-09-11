@@ -9,8 +9,8 @@ import io.github.mortuusars.scholar.client.render.ChiseledBookShelf;
 import io.github.mortuusars.scholar.client.resource.BuiltInResourcePacks;
 import io.github.mortuusars.scholar.network.fabric.FabricS2CPacketHandler;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -22,7 +22,7 @@ import net.minecraft.world.item.Items;
 public class ScholarFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ChiseledBookShelf.setBookshelfRenderLayer(BlockRenderLayerMap.INSTANCE::putBlock);
+        ChiseledBookShelf.setBookshelfRenderLayer(BlockRenderLayerMap::putBlock);
         ChiseledBookShelf.registerBookshelfBlockColors(ColorProviderRegistry.BLOCK::register);
 
         FabricLoader.getInstance().getModContainer(Scholar.ID).ifPresent(container -> {
@@ -35,9 +35,6 @@ public class ScholarFabricClient implements ClientModInitializer {
                 ResourceManagerHelper.registerBuiltinResourcePack(pack.id(), container, pack.name(), activationType);
             }
         });
-
-        ColorProviderRegistry.ITEM.register(BookColor::getItemTintColor, Items.WRITABLE_BOOK);
-        ColorProviderRegistry.ITEM.register(BookColor::getItemTintColor, Items.WRITTEN_BOOK);
 
         ScholarClient.KeyMappings.register(KeyBindingHelper::registerKeyBinding);
 

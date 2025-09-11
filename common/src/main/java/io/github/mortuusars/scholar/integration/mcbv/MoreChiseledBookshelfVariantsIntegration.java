@@ -5,6 +5,7 @@ import io.github.mortuusars.scholar.Scholar;
 import io.github.mortuusars.scholar.client.render.ChiseledBookShelf;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.world.level.block.Block;
 
 import java.util.function.BiConsumer;
@@ -26,19 +27,19 @@ public class MoreChiseledBookshelfVariantsIntegration {
         consumer.accept(ChiseledBookShelf::getSlotTintColor, McbvBlockInit.WARPED_CHISELED_BOOKSHELF);
     }
 
-    public static void setRenderLayer(BiConsumer<Block, RenderType> consumer) {
+    public static void setRenderLayer(BiConsumer<Block, ChunkSectionLayer> consumer) {
         Scholar.LOGGER.info("Setting 'cutout' render type for 'More Chiseled Bookshelf Variants (lolmcbv)'. " +
                 "If MCBV bookshelves displaying wrongly - try without Scholar installed, and if incompatibility " +
                 "is confirmed - report to Scholar github.");
-        consumer.accept(McbvBlockInit.SPRUCE_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.BIRCH_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.JUNGLE_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.ACACIA_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.DARK_OAK_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.MANGROVE_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.CHERRY_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.BAMBOO_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.CRIMSON_CHISELED_BOOKSHELF, RenderType.cutout());
-        consumer.accept(McbvBlockInit.WARPED_CHISELED_BOOKSHELF, RenderType.cutout());
+        consumer.accept(McbvBlockInit.SPRUCE_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.BIRCH_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.JUNGLE_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.ACACIA_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.DARK_OAK_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.MANGROVE_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.CHERRY_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.BAMBOO_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.CRIMSON_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
+        consumer.accept(McbvBlockInit.WARPED_CHISELED_BOOKSHELF, ChunkSectionLayer.CUTOUT);
     }
 }

@@ -55,17 +55,17 @@ public interface BookViewAccess {
     }
 
     static void loadPages(CompoundTag compoundTag, Consumer<String> consumer) {
-        ListTag listTag = compoundTag.getList("pages", 8).copy();
+        ListTag listTag = compoundTag.getList("pages").orElse(new ListTag()).copy();
         IntFunction<String> intFunction;
-        if (Minecraft.getInstance().isTextFilteringEnabled() && compoundTag.contains("filtered_pages", 10)) {
-            CompoundTag compoundTag2 = compoundTag.getCompound("filtered_pages");
+        if (Minecraft.getInstance().isTextFilteringEnabled() && compoundTag.contains("filtered_pages")) {
+            CompoundTag compoundTag2 = compoundTag.getCompound("filtered_pages").orElse(new CompoundTag());
             intFunction = (ix) -> {
                 String string = String.valueOf(ix);
-                return compoundTag2.contains(string) ? compoundTag2.getString(string) : listTag.getString(ix);
+                return compoundTag2.contains(string) ? compoundTag2.getStringOr(string, "") : listTag.getStringOr(ix, "");
             };
         } else {
             Objects.requireNonNull(listTag);
-            intFunction = listTag::getString;
+            intFunction = (i)-> listTag.getStringOr(i, "");
         }
 
         for (int i = 0; i < listTag.size(); ++i) {

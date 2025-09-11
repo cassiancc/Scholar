@@ -5,6 +5,7 @@ import io.github.mortuusars.scholar.Scholar;
 import io.github.mortuusars.scholar.client.render.ChiseledBookShelf;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -23,13 +24,13 @@ public class WoodsterIntegration {
         });
     }
 
-    public static void setRenderLayer(BiConsumer<Block, RenderType> consumer) {
+    public static void setRenderLayer(BiConsumer<Block, ChunkSectionLayer> consumer) {
         Scholar.LOGGER.info("Setting 'cutout' render type for 'Woodworks'. " +
                 "If Woodworks bookshelves displaying wrongly - try without Scholar installed, and if incompatibility " +
                 "is confirmed - report to Scholar github.");
 
         getChiseledBookshelves().forEach(block -> {
-            consumer.accept(block, RenderType.cutout());
+            consumer.accept(block, ChunkSectionLayer.CUTOUT);
         });
     }
 

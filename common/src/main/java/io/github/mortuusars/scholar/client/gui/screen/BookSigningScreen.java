@@ -7,7 +7,6 @@ import io.github.mortuusars.scholar.client.gui.Widgets;
 import io.github.mortuusars.scholar.client.gui.widget.textbox.display.HorizontalAlignment;
 import io.github.mortuusars.scholar.client.gui.widget.textbox.text.FormattedString;
 import io.github.mortuusars.scholar.client.gui.widget.textbox.TextBox;
-import io.github.mortuusars.scholar.client.util.RenderUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,6 +14,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -132,12 +132,10 @@ public class BookSigningScreen extends Screen {
 
         renderTransparentBackground(guiGraphics);
 
-        RenderUtil.withColorMultiplied(bookColor, () -> {
-            guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, 0,
-                    imageWidth, imageHeight, textureWidth, textureHeight);
-        });
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0,
+                imageWidth, imageHeight, textureWidth, textureHeight, bookColor);
 
-        guiGraphics.blit(TEXTURE, leftPos, topPos + 31, 0, 0, 180,
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos + 31, 0, 180,
                 imageWidth, 76, textureWidth, textureHeight);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);

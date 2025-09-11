@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import io.github.mortuusars.scholar.Register;
 import io.github.mortuusars.scholar.Scholar;
 import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.core.component.DataComponentType;
@@ -42,7 +41,6 @@ public class RegisterImpl {
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, Scholar.ID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Scholar.ID);
     public static final DeferredRegister<CriterionTrigger<?>> CRITERION_TRIGGERS = DeferredRegister.create(Registries.TRIGGER_TYPE, Scholar.ID);
-    public static final DeferredRegister<ItemSubPredicate.Type<?>> ITEM_SUB_PREDICATES = DeferredRegister.create(Registries.ITEM_SUB_PREDICATE_TYPE, Scholar.ID);
     public static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, Scholar.ID);
     public static final DeferredRegister<Feature<?>> WORLD_GEN_FEATURES = DeferredRegister.create(Registries.FEATURE, Scholar.ID);
     public static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Scholar.ID);
@@ -58,30 +56,11 @@ public class RegisterImpl {
     }
 
     public static <T extends BlockEntity> BlockEntityType<T> newBlockEntityType(Register.BlockEntitySupplier<T> blockEntitySupplier, Block... validBlocks) {
-        return BlockEntityType.Builder.of(blockEntitySupplier::create, validBlocks).build(null);
+        return new BlockEntityType<>(blockEntitySupplier::create, validBlocks);
     }
 
     public static <T extends Item> Supplier<T> item(String id, Supplier<T> supplier) {
         return ITEMS.register(id, supplier);
-    }
-
-    public static <T extends Entity> Supplier<EntityType<T>> entityType(String id, EntityType.EntityFactory<T> factory, MobCategory category,
-                                                                        float width, float height, int clientTrackingRange, boolean velocityUpdates, int updateInterval) {
-        return ENTITY_TYPES.register(id, () -> EntityType.Builder.of(factory, category)
-                .sized(width, height)
-                .clientTrackingRange(clientTrackingRange)
-                .setShouldReceiveVelocityUpdates(velocityUpdates)
-                .updateInterval(updateInterval)
-                .build(id));
-    }
-
-    public static <T extends Entity> Supplier<EntityType<T>> entityType(String id, EntityType.EntityFactory<T> factory, MobCategory category, boolean receiveVelocityUpdates, Consumer<EntityType.Builder<T>> typeBuilder) {
-        return ENTITY_TYPES.register(id, () -> {
-            EntityType.Builder<T> builder = EntityType.Builder.of(factory, category);
-            builder.setShouldReceiveVelocityUpdates(receiveVelocityUpdates);
-            typeBuilder.accept(builder);
-            return builder.build(id);
-        });
     }
 
     public static <T extends SoundEvent> Supplier<T> soundEvent(String id, Supplier<T> supplier) {
@@ -102,10 +81,6 @@ public class RegisterImpl {
 
     public static <T extends CriterionTrigger<?>> Supplier<T> criterionTrigger(String name, Supplier<T> supplier) {
         return CRITERION_TRIGGERS.register(name, supplier);
-    }
-
-    public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
-        return ITEM_SUB_PREDICATES.register(name, supplier);
     }
 
     public static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>>

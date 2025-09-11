@@ -69,7 +69,7 @@ public record LecternEditBookC2SP(BlockPos lecternPos, List<String> pages, Optio
             return true;
         }
 
-        serverPlayer.server.execute(() -> {
+        serverPlayer.getServer().execute(() -> {
             if (!(player.level().getBlockEntity(lecternPos) instanceof LecternBlockEntity lecternBlockEntity)) {
                 Scholar.LOGGER.error("Cannot update lectern book: no lectern block entity at lecternPos '{}'", lecternPos);
                 return;
@@ -82,7 +82,7 @@ public record LecternEditBookC2SP(BlockPos lecternPos, List<String> pages, Optio
             Consumer<List<FilteredText>> consumer = title.isPresent()
                     ? list -> signBook(serverPlayer, list.get(0), list.subList(1, list.size()), lecternBlockEntity)
                     : list -> updateBookContents(serverPlayer, list, lecternBlockEntity);
-            this.filterTextPacket(serverPlayer,bookPages).thenAcceptAsync(consumer, serverPlayer.server);
+            this.filterTextPacket(serverPlayer,bookPages).thenAcceptAsync(consumer, serverPlayer.getServer());
         });
 
         return true;

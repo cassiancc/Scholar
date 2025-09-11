@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LocalPlayer.class)
 public abstract class OpenWritableBookGuiLocalPlayerMixin extends Player {
     public OpenWritableBookGuiLocalPlayerMixin(Level pLevel, BlockPos pPos, float pYRot, GameProfile pGameProfile) {
-        super(pLevel, pPos, pYRot, pGameProfile);
+        super(pLevel, pGameProfile);
     }
 
     @Inject(method = "openItemGui", at = @At("HEAD"), cancellable = true)
