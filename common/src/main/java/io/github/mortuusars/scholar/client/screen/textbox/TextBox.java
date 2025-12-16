@@ -173,6 +173,11 @@ public class TextBox extends AbstractWidget {
     }
 
     @Override
+    public void setFocused(boolean focused) {
+        super.setFocused(focused);
+    }
+
+    @Override
     public @NotNull Component getMessage() {
         return Component.literal(getText());
     }
@@ -247,9 +252,12 @@ public class TextBox extends AbstractWidget {
 
             lastIndex = index;
             lastClickTime = currentTime;
+
+            this.setFocused(true);
             return true;
         }
 
+        this.setFocused(false);
         return false;
     }
 

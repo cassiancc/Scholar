@@ -417,6 +417,12 @@ public class SpreadBookEditScreen extends Screen {
             return true;
         }
 
+        if (leftPageTextBox.isMouseOver(mouseX, mouseY)) {
+            rightPageTextBox.setFocused(false);
+        } else if (rightPageTextBox.isMouseOver(mouseX, mouseY)) {
+            leftPageTextBox.setFocused(false);
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
