@@ -59,7 +59,17 @@ public class ClientEvents {
                                     modContainer.getModInfo().getOwningFile().getFile(),
                                     "resourcepacks/" + pack.id().getPath()
                             ),
-                            packConstructor,
+                            (id, title, required, resources, metadata, position, source, hidden) ->
+                                    packConstructor.create(
+                                            id,
+                                            pack.name(),
+                                            required,
+                                            resources,
+                                            metadata,
+                                            position,
+                                            source,
+                                            hidden
+                                    ),
                             Pack.Position.TOP,
                             PackSource.BUILT_IN
                     );
