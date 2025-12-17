@@ -2,6 +2,7 @@ package io.github.mortuusars.scholar.client.gui.screen.edit;
 
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.scholar.Scholar;
 import io.github.mortuusars.scholar.ScholarClient;
@@ -219,6 +220,8 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
     @Override
     protected void renderBook(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         RenderUtil.withColorMultiplied(bookColor, () -> {
+            RenderSystem.setShaderTexture(0, TEXTURE);
+
             if (isToolsVisible()) {
                 // Import/Export buttons BG
                 blit(poseStack, leftPos + 295, topPos + 14, 0, 388,
@@ -235,6 +238,7 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
         });
 
         // Paper
+        RenderSystem.setShaderTexture(0, TEXTURE);
         blit(poseStack, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                 0, 180, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
     }
