@@ -54,7 +54,7 @@ public class LecternSpreadBookEditMenu extends LecternSpreadMenu {
             int newPageIndex = Spread.Side.LEFT.getPageIndexFromSpread(newSpreadIndex);
 
             // Update pageCount for correct analog redstone output:
-            if (player.level().getBlockEntity(getLecternPos()) instanceof LecternBlockEntity lecternBlockEntity) {
+            if (player.level.getBlockEntity(getLecternPos()) instanceof LecternBlockEntity lecternBlockEntity) {
                 lecternBlockEntity.pageCount = Math.min(100, Spread.Side.RIGHT.getPageIndexFromSpread(newSpreadIndex) + 2);
             }
 
@@ -75,9 +75,10 @@ public class LecternSpreadBookEditMenu extends LecternSpreadMenu {
         // Their view will be the same as if they'd opened Written Book.
 
         if (player instanceof ServerPlayer serverPlayer
-                && player.level().getBlockEntity(getLecternPos()) instanceof LecternBlockEntity be
+                && player.level.getBlockEntity(getLecternPos()) instanceof LecternBlockEntity be
                 && be.hasBook()) {
-            serverPlayer.serverLevel().players().stream()
+
+            serverPlayer.getLevel().players().stream()
                     .filter(pl -> !pl.equals(serverPlayer)
                             && pl.containerMenu instanceof LecternSpreadMenu lecternMenu
                             && lecternMenu.getLecternPos().equals(getLecternPos()))

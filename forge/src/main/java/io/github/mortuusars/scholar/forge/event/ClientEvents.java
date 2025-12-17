@@ -49,27 +49,26 @@ public class ClientEvents {
         public static void addPacks(AddPackFindersEvent event) {
             if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
 
-            ModList.get().getModContainerById(Scholar.ID).ifPresent(modContainer -> {
-                event.addRepositorySource((packConsumer) -> {
-                    for (BuiltInResourcePacks.Pack pack : BuiltInResourcePacks.get()) {
-                        Pack createdPack = Pack.readMetaAndCreate(
-                                pack.id().toString(),
-                                pack.name(),
-                                pack.activation().forge() == BuiltInResourcePacks.ActivationType.ALWAYS_ENABLED,
-                                (id) -> new ModFilePackResources(
-                                        id,
-                                        modContainer.getModInfo().getOwningFile().getFile(),
-                                        "resourcepacks/" + pack.id().getPath(),
-                                        true
-                                ),
-                                PackType.CLIENT_RESOURCES,
-                                Pack.Position.TOP,
-                                PackSource.BUILT_IN);
+            ModList.get().getModContainerById(Scholar.ID).ifPresent(modContainer -> event.addRepositorySource((packConsumer, packConstructor) -> {
+                for (BuiltInResourcePacks.Pack pack : BuiltInResourcePacks.get()) {
+                    Pack createdPack = Pack.create(
+                            pack.id().toString(),
+                            pack.activation().forge() == BuiltInResourcePacks.ActivationType.ALWAYS_ENABLED,
+                            () -> new ModFilePackResources(
+                                    pack.id().toString(),
+                                    modContainer.getModInfo().getOwningFile().getFile(),
+                                    "resourcepacks/" + pack.id().getPath()
+                            ),
+                            packConstructor,
+                            Pack.Position.TOP,
+                            PackSource.BUILT_IN
+                    );
 
+                    if (createdPack != null) {
                         packConsumer.accept(createdPack);
                     }
-                });
-            });
+                }
+            }));
         }
     }
 }

@@ -10,8 +10,8 @@ public class ModFilePackResources extends PathPackResources {
 	protected final IModFile modFile;
 	protected final String sourcePath;
 
-	public ModFilePackResources(String name, IModFile modFile, String sourcePath, boolean isBuiltIn) {
-		super(name, isBuiltIn, modFile.findResource(sourcePath));
+	public ModFilePackResources(String name, IModFile modFile, String sourcePath) {
+		super(name, modFile.findResource(sourcePath));
 		this.modFile = modFile;
 		this.sourcePath = sourcePath;
 	}

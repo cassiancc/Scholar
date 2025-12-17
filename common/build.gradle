@@ -6,8 +6,11 @@ loom {
     accessWidenerPath = file("src/main/resources/scholar.accesswidener")
 }
 
-configurations {
-    create("junit")
+repositories {
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
 }
 
 dependencies {
@@ -22,9 +25,19 @@ dependencies {
     modCompileOnly("mezz.jei:jei-${minecraft_version}-common:${jei_version}")
     modCompileOnly("mezz.jei:jei-${minecraft_version}-gui:${jei_version}")
 
-    modCompileOnly("maven.modrinth:more-chiseled-bookshelf-variants:rb2kjXS0")
-    modCompileOnly("maven.modrinth:blueprint:z4m8zvm5")
-    modCompileOnly("maven.modrinth:woodworks:236Amnif")
-
     api "net.minecraftforge:forgeconfigapiport-fabric:${forge_config_api_version}"
+}
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = mod_id
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+    }
 }

@@ -2,6 +2,7 @@ package io.github.mortuusars.scholar.client.gui.screen.edit;
 
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.scholar.Scholar;
 import io.github.mortuusars.scholar.ScholarClient;
 import io.github.mortuusars.scholar.book.BookColor;
@@ -18,9 +19,7 @@ import io.github.mortuusars.scholar.client.util.RenderUtil;
 import io.netty.util.internal.StringUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.nbt.CompoundTag;
@@ -117,8 +116,9 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
 
         ImageButton enterSignModeButton = new ImageButton(leftPos - 24, topPos + 18, 22, 22, 321, 0,
                 22, TEXTURE, 512, 512,
-                b -> enterSignMode(), Component.translatable("book.signButton"));
-        enterSignModeButton.setTooltip(Tooltip.create(Component.translatable("book.signButton")));
+                b -> enterSignMode(),
+                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("book.signButton"), x, y),
+                Component.translatable("book.signButton"));
         addRenderableWidget(enterSignModeButton);
 
         createBottomButtons();
@@ -127,50 +127,56 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
     protected void createPageToolButtons() {
         insertEmptyPageLeftButton = new ImageButton(leftPos + 112, topPos + 154, 13, 13, 343, 0,
                 13, TEXTURE, 512, 512,
-                b -> insertEmptyPage(Spread.Side.LEFT), Component.translatable("gui.scholar.insert_empty_page"));
-        insertEmptyPageLeftButton.setTooltip(Tooltip.create(Component.translatable("gui.scholar.insert_empty_page")
-                .append(" ").append(Component.translatable("gui.scholar.insert_empty_page_left.hotkey"))));
+                b -> insertEmptyPage(Spread.Side.LEFT),
+                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("gui.scholar.insert_empty_page")
+                        .append(" ").append(Component.translatable("gui.scholar.insert_empty_page_left.hotkey")), x, y),
+                Component.translatable("gui.scholar.insert_empty_page"));
         addRenderableWidget(insertEmptyPageLeftButton);
 
         removePageLeftButton = new ImageButton(leftPos + 126, topPos + 154, 13, 13, 356, 0,
                 13, TEXTURE, 512, 512,
-                b -> removePage(Spread.Side.LEFT), Component.translatable("gui.scholar.remove_page"));
-        removePageLeftButton.setTooltip(Tooltip.create(Component.translatable("gui.scholar.remove_page")
-                .append(" ").append(Component.translatable("gui.scholar.remove_page_left.hotkey"))));
+                b -> removePage(Spread.Side.LEFT),
+                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("gui.scholar.remove_page")
+                        .append(" ").append(Component.translatable("gui.scholar.remove_page_left.hotkey")), x, y),
+                Component.translatable("gui.scholar.remove_page"));
         addRenderableWidget(removePageLeftButton);
 
         insertEmptyPageRightButton = new ImageButton(leftPos + 156, topPos + 154, 13, 13, 343, 0,
                 13, TEXTURE, 512, 512,
-                b -> insertEmptyPage(Spread.Side.RIGHT), Component.translatable("gui.scholar.insert_empty_page"));
-        insertEmptyPageRightButton.setTooltip(Tooltip.create(Component.translatable("gui.scholar.insert_empty_page")
-                .append(" ").append(Component.translatable("gui.scholar.insert_empty_page_right.hotkey"))));
+                b -> insertEmptyPage(Spread.Side.RIGHT),
+                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("gui.scholar.insert_empty_page")
+                        .append(" ").append(Component.translatable("gui.scholar.insert_empty_page_right.hotkey")), x, y),
+                Component.translatable("gui.scholar.insert_empty_page"));
         addRenderableWidget(insertEmptyPageRightButton);
 
         removePageRightButton = new ImageButton(leftPos + 170, topPos + 154, 13, 13, 356, 0,
                 13, TEXTURE, 512, 512,
-                b -> removePage(Spread.Side.RIGHT), Component.translatable("gui.scholar.remove_page"));
-        removePageRightButton.setTooltip(Tooltip.create(Component.translatable("gui.scholar.remove_page")
-                .append(" ").append(Component.translatable("gui.scholar.remove_page_right.hotkey"))));
+                b -> removePage(Spread.Side.RIGHT),
+                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("gui.scholar.remove_page")
+                        .append(" ").append(Component.translatable("gui.scholar.remove_page_right.hotkey")), x, y),
+                Component.translatable("gui.scholar.remove_page"));
         addRenderableWidget(removePageRightButton);
     }
 
     protected void createImportExportButtons() {
         importBookButton = new ImageButton(leftPos + 297, topPos + 16, 18, 18, 387, 0,
                 18, TEXTURE, 512, 512,
-                b -> importBook(Screen.hasShiftDown()), Component.translatable("gui.scholar.import_book"));
-        importBookButton.setTooltip(Tooltip.create(Component.translatable("gui.scholar.import_book")
-                .append(ScholarClient.KeyMappings.componentForTooltip(ScholarClient.KeyMappings.importBook))
-                .append(CommonComponents.NEW_LINE)
-                .append(Component.translatable("gui.scholar.import_book.tooltip"))));
+                b -> importBook(Screen.hasShiftDown()),
+                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("gui.scholar.import_book")
+                        .append(ScholarClient.KeyMappings.componentForTooltip(ScholarClient.KeyMappings.importBook))
+                        .append(CommonComponents.NEW_LINE)
+                        .append(Component.translatable("gui.scholar.import_book.tooltip")), x, y),
+                Component.translatable("gui.scholar.import_book"));
         addRenderableWidget(importBookButton);
 
         exportBookButton = new ImageButton(leftPos + 297, topPos + 41, 18, 18, 369, 0,
                 18, TEXTURE, 512, 512,
-                b -> exportBook(Screen.hasShiftDown()), Component.translatable("gui.scholar.export_book"));
-        exportBookButton.setTooltip(Tooltip.create(Component.translatable("gui.scholar.export_book")
-                .append(ScholarClient.KeyMappings.componentForTooltip(ScholarClient.KeyMappings.exportBook))
-                .append(CommonComponents.NEW_LINE)
-                .append(Component.translatable("gui.scholar.export_book.tooltip"))));
+                b -> exportBook(Screen.hasShiftDown()),
+                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("gui.scholar.export_book")
+                        .append(ScholarClient.KeyMappings.componentForTooltip(ScholarClient.KeyMappings.exportBook))
+                        .append(CommonComponents.NEW_LINE)
+                        .append(Component.translatable("gui.scholar.export_book.tooltip")), x, y),
+                Component.translatable("gui.scholar.export_book"));
         addRenderableWidget(exportBookButton);
     }
 
@@ -199,47 +205,45 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
         importBookButton.visible = isToolsVisible();
     }
 
-    // -- Render
-
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         updateButtonVisibility();
 
-        renderBackground(guiGraphics);
-        renderBook(guiGraphics, mouseX, mouseY, partialTick);
-        renderPageNumbers(guiGraphics, mouseX, mouseY, partialTick, currentSpread);
-        renderTools(guiGraphics, mouseX, mouseY, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        renderBackground(poseStack);
+        renderBook(poseStack, mouseX, mouseY, partialTick);
+        renderPageNumbers(poseStack, mouseX, mouseY, partialTick, currentSpread);
+        renderTools(poseStack, mouseX, mouseY, partialTick);
+        super.render(poseStack, mouseX, mouseY, partialTick);
     }
 
     @Override
-    protected void renderBook(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderBook(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         RenderUtil.withColorMultiplied(bookColor, () -> {
             if (isToolsVisible()) {
                 // Import/Export buttons BG
-                guiGraphics.blit(TEXTURE, leftPos + 295, topPos + 14, 0, 388,
+                blit(poseStack, leftPos + 295, topPos + 14, 0, 388,
                         23, 48, 512, 512);
             }
 
             // Cover
-            guiGraphics.blit(TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+            blit(poseStack, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                     0, 0, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
 
             // Enter Sign Mode button BG
-            guiGraphics.blit(TEXTURE, leftPos - 29, topPos + 14, 0, 360,
+            blit(poseStack, leftPos - 29, topPos + 14, 0, 360,
                     29, 28, 512, 512);
         });
 
         // Paper
-        guiGraphics.blit(TEXTURE, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
+        blit(poseStack, (width - BOOK_WIDTH) / 2, (height - BOOK_HEIGHT) / 2, BOOK_WIDTH, BOOK_HEIGHT,
                 0, 180, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
     }
 
     @Override
-    protected void renderTools(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderTools(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         int x = width - 12;
         int y = 6;
-        guiGraphics.drawString(font, "?", x, y, 0xFFAAAAAA);
+        font.draw(poseStack, "?", x, y, 0xFFAAAAAA);
 
         if (mouseX >= x - 3 && mouseX < x + 12 + 3 && mouseY >= y - 3 && mouseY < y + 12) {
             List<Component> tooltip = new ArrayList<>();
@@ -249,7 +253,7 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
             tooltip.add(Component.translatable("gui.scholar.tools.tooltip.paste_with_formatting"));
             tooltip.add(Component.translatable("gui.scholar.tools.tooltip.undo"));
             tooltip.add(Component.translatable("gui.scholar.tools.tooltip.redo"));
-            guiGraphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY + 20);
+            renderTooltip(poseStack, tooltip, Optional.empty(), mouseX, mouseY + 20);
         }
     }
 
@@ -314,10 +318,14 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
             return true;
         }
 
+        if (leftPageTextBox.isMouseOver(mouseX, mouseY)) {
+            rightPageTextBox.setFocused(false);
+        } else if (rightPageTextBox.isMouseOver(mouseX, mouseY)) {
+            leftPageTextBox.setFocused(false);
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
-
-    // --
 
     @Override
     protected boolean pageForward() {
@@ -383,10 +391,8 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
     protected void enterSignMode() {
         saveChanges(false, null);
         minecraft.execute(() ->
-            minecraft.setScreen(new BookSigningScreen(this, bookColor, title -> saveChanges(true, title))));
+                minecraft.setScreen(new BookSigningScreen(this, bookColor, title -> saveChanges(true, title))));
     }
-
-    // --
 
     protected String getPageText(Spread.Side side) {
         int pageIndex = side.getPageIndexFromSpread(currentSpread);

@@ -1,8 +1,8 @@
 package io.github.mortuusars.scholar.client.gui.screen.view;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.scholar.client.gui.screen.SpreadBookScreen;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
@@ -54,25 +54,25 @@ public class SpreadBookViewScreen extends SpreadBookScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         updateButtonVisibility();
 
-        renderBackground(guiGraphics);
-        renderBook(guiGraphics, mouseX, mouseY, partialTick);
-        renderPageNumbers(guiGraphics, mouseX, mouseY, partialTick, currentSpread);
-        renderTools(guiGraphics, mouseX, mouseY, partialTick);
+        renderBackground(poseStack);
+        renderBook(poseStack, mouseX, mouseY, partialTick);
+        renderPageNumbers(poseStack, mouseX, mouseY, partialTick, currentSpread);
+        renderTools(poseStack, mouseX, mouseY, partialTick);
 
         updateAndCacheContentsIfNeeded();
 
-        renderPageContents(guiGraphics, cachedPageComponents.getFirst(), leftPos + TEXT_LEFT_X, topPos + TEXT_Y);
-        renderPageContents(guiGraphics, cachedPageComponents.getSecond(), leftPos + TEXT_RIGHT_X, topPos + TEXT_Y);
+        renderPageContents(poseStack, cachedPageComponents.getFirst(), leftPos + TEXT_LEFT_X, topPos + TEXT_Y);
+        renderPageContents(poseStack, cachedPageComponents.getSecond(), leftPos + TEXT_RIGHT_X, topPos + TEXT_Y);
 
         Style style = getClickedComponentStyleAt(mouseX, mouseY);
         if (style != null) {
-            guiGraphics.renderComponentHoverEffect(font, style, mouseX, mouseY);
+            renderComponentHoverEffect(poseStack, style, mouseX, mouseY);
         }
 
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.render(poseStack, mouseX, mouseY, partialTick);
     }
 
     protected void updateAndCacheContentsIfNeeded() {
@@ -89,11 +89,11 @@ public class SpreadBookViewScreen extends SpreadBookScreen {
         }
     }
 
-    protected void renderPageContents(GuiGraphics guiGraphics, List<FormattedCharSequence> lines, int x, int y) {
+    protected void renderPageContents(PoseStack poseStack, List<FormattedCharSequence> lines, int x, int y) {
         int maxLines = Math.min(TEXT_HEIGHT / font.lineHeight, lines.size());
         for (int i = 0; i < maxLines; ++i) {
             FormattedCharSequence text = lines.get(i);
-            guiGraphics.drawString(font, text, x, y + i * font.lineHeight, textColor, false);
+            font.draw(poseStack, text, x, y + i * font.lineHeight, textColor);
         }
     }
 

@@ -1,6 +1,8 @@
 package io.github.mortuusars.scholar.client.gui.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.scholar.Config;
 import io.github.mortuusars.scholar.Scholar;
 import io.github.mortuusars.scholar.ScholarClient;
@@ -8,10 +10,8 @@ import io.github.mortuusars.scholar.client.gui.widget.textbox.TextBox;
 import io.github.mortuusars.scholar.client.util.RenderUtil;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -81,26 +81,25 @@ public abstract class SpreadBookScreen extends Screen {
     }
 
     protected void createNextPageButton() {
-        ImageButton nextPageButton = new ImageButton(leftPos + 270, topPos + 156, 13, 15,
+        this.nextPageButton = addRenderableWidget(new ImageButton(leftPos + 270, topPos + 156, 13, 15,
                 308, 0, 15, TEXTURE, 512, 512,
-                (button) -> pageForward());
-        nextPageButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.next_page")));
-        this.nextPageButton = addRenderableWidget(nextPageButton);
+                (button) -> pageForward(),
+                (button, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("spectatorMenu.next_page"), x, y),
+                Component.translatable("spectatorMenu.next_page")));
     }
 
     protected void createPrevPageButton() {
-        ImageButton prevPageButton = new ImageButton(leftPos + 12, topPos + 156, 13, 15,
+        this.prevPageButton = addRenderableWidget(new ImageButton(leftPos + 12, topPos + 156, 13, 15,
                 295, 0, 15, TEXTURE, 512, 512,
-                (button) -> pageBack());
-        prevPageButton.setTooltip(Tooltip.create(Component.translatable("spectatorMenu.previous_page")));
-        this.prevPageButton = addRenderableWidget(prevPageButton);
+                (button) -> pageBack(),
+                (button, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("spectatorMenu.previous_page"), x, y),
+                Component.translatable("spectatorMenu.previous_page")));
     }
 
     protected void createBottomButtons() {
         if (Config.Client.SHOW_DONE_BUTTON.get()) {
-            addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, (button) -> onClose())
-                    .bounds(this.width / 2 - 60, topPos + BOOK_HEIGHT + 12, 120, 20)
-                    .build());
+            addRenderableWidget(new Button(this.width / 2 - 60, topPos + BOOK_HEIGHT + 12, 120, 20, CommonComponents.GUI_DONE,
+                    (button) -> onClose()));
         }
     }
 
@@ -149,38 +148,38 @@ public abstract class SpreadBookScreen extends Screen {
         return false;
     }
 
-    // -- Render
-
-    protected void renderBook(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderBook(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         RenderUtil.withColorMultiplied(bookColor, () -> {
+            RenderSystem.setShaderTexture(0, TEXTURE);
             // Cover
-            guiGraphics.blit(TEXTURE, leftPos, topPos, BOOK_WIDTH, BOOK_HEIGHT,
+            blit(poseStack, leftPos, topPos, BOOK_WIDTH, BOOK_HEIGHT,
                     0, 0, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
         });
 
         // Paper
-        guiGraphics.blit(TEXTURE, leftPos, topPos, BOOK_WIDTH, BOOK_HEIGHT,
+        RenderSystem.setShaderTexture(0, TEXTURE);
+        blit(poseStack, leftPos, topPos, BOOK_WIDTH, BOOK_HEIGHT,
                 0, BOOK_HEIGHT, BOOK_WIDTH, BOOK_HEIGHT, 512, 512);
     }
 
-    protected void renderPageNumbers(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, int currentSpread) {
-        renderLeftPageNumber(guiGraphics, mouseX, mouseY, partialTick, currentSpread, pageNumbersColor);
-        renderRightPageNumber(guiGraphics, mouseX, mouseY, partialTick, currentSpread, pageNumbersColor);
+    protected void renderPageNumbers(PoseStack poseStack, int mouseX, int mouseY, float partialTick, int currentSpread) {
+        renderLeftPageNumber(poseStack, mouseX, mouseY, partialTick, currentSpread, pageNumbersColor);
+        renderRightPageNumber(poseStack, mouseX, mouseY, partialTick, currentSpread, pageNumbersColor);
     }
 
-    protected void renderLeftPageNumber(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, int currentSpread, int color) {
+    protected void renderLeftPageNumber(PoseStack poseStack, int mouseX, int mouseY, float partialTick, int currentSpread, int color) {
         String leftPageNumber = Integer.toString(currentSpread * 2 + 1);
-        guiGraphics.drawString(font, leftPageNumber, leftPos + 69 + (8 - font.width(leftPageNumber) / 2),
-                topPos + 157, color, false);
+        font.draw(poseStack, leftPageNumber, leftPos + 69 + (8 - font.width(leftPageNumber) / 2),
+                topPos + 157, color);
     }
 
-    protected void renderRightPageNumber(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, int currentSpread, int color) {
+    protected void renderRightPageNumber(PoseStack poseStack, int mouseX, int mouseY, float partialTick, int currentSpread, int color) {
         String rightPageNumber = Integer.toString(currentSpread * 2 + 2);
-        guiGraphics.drawString(font, rightPageNumber, leftPos + 208 + (8 - font.width(rightPageNumber) / 2),
-                topPos + 157, color, false);
+        font.draw(poseStack, rightPageNumber, leftPos + 208 + (8 - font.width(rightPageNumber) / 2),
+                topPos + 157, color);
     }
 
-    protected void renderTools(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderTools(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
     }
 
     // -- Input
@@ -238,17 +237,17 @@ public abstract class SpreadBookScreen extends Screen {
 
     protected void playButtonClickSound(float volume, float pitch) {
         Minecraft.getInstance().getSoundManager().play(
-                SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), pitch, volume));
+                SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, pitch, volume));
     }
 
     protected void playButtonClickSound(float pitch) {
         Minecraft.getInstance().getSoundManager().play(
-                SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), pitch, 0.3f));
+                SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, pitch, 0.3f));
     }
 
     protected void playButtonClickSound() {
         Minecraft.getInstance().getSoundManager().play(
-                SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1, 0.3f));
+                SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1, 0.3f));
     }
 
     protected void playPageTurnSound(float volume, float pitch) {

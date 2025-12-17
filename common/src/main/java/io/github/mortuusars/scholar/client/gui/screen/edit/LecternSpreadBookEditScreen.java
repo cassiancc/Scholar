@@ -1,5 +1,6 @@
 package io.github.mortuusars.scholar.client.gui.screen.edit;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.scholar.Config;
 import io.github.mortuusars.scholar.book.BookColor;
 import io.github.mortuusars.scholar.client.gui.screen.SpreadBookScreen;
@@ -7,7 +8,6 @@ import io.github.mortuusars.scholar.menu.LecternSpreadBookEditMenu;
 import io.github.mortuusars.scholar.network.Packets;
 import io.github.mortuusars.scholar.network.packet.server.LecternEditBookC2SP;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -15,7 +15,9 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerListener;
+import net.minecraft.world.inventory.LecternMenu;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,13 +61,17 @@ public class LecternSpreadBookEditScreen extends SpreadBookEditScreen implements
     protected void createBottomButtons() {
         if (player.mayBuild()) {
             if (Config.Client.SHOW_DONE_BUTTON.get()) {
-                this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE,
-                        button -> this.onClose()).bounds(this.width / 2 - 100, topPos + SpreadBookScreen.BOOK_HEIGHT + 12, 98, 20).build());
-                this.addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"),
-                        button -> this.sendButtonClick(3)).bounds(this.width / 2 + 2, topPos + SpreadBookScreen.BOOK_HEIGHT + 12, 98, 20).build());
+                this.addRenderableWidget(new Button(this.width / 2 - 100, topPos + SpreadBookScreen.BOOK_HEIGHT + 12, 98, 20,
+                        CommonComponents.GUI_DONE,
+                        button -> this.onClose()));
+
+                this.addRenderableWidget(new Button(this.width / 2 + 2, topPos + SpreadBookScreen.BOOK_HEIGHT + 12, 98, 20,
+                        Component.translatable("lectern.take_book"),
+                        button -> this.sendButtonClick(3)));
             } else {
-                this.addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"),
-                        (button) -> this.sendButtonClick(3)).bounds(this.width / 2 - 60, topPos + SpreadBookScreen.BOOK_HEIGHT + 12, 120, 20).build());
+                this.addRenderableWidget(new Button(this.width / 2 - 60, topPos + SpreadBookScreen.BOOK_HEIGHT + 12, 120, 20,
+                        Component.translatable("lectern.take_book"),
+                        (button) -> this.sendButtonClick(3)));
             }
         } else {
             super.createBottomButtons();
@@ -102,7 +108,6 @@ public class LecternSpreadBookEditScreen extends SpreadBookEditScreen implements
         if (currentSpread != newSpreadIndex) {
             currentSpread = newSpreadIndex;
 
-            // Ensure we have pages to display:
             while (this.pages.size() < (currentSpread + 1) * 2) {
                 appendEmptyPage();
             }
@@ -116,40 +121,37 @@ public class LecternSpreadBookEditScreen extends SpreadBookEditScreen implements
     @Override
     protected void sendChanges(@Nullable String title) {
         removeEmptyTrailingPages();
-        // Copying 'pages' list to not cause ConcurrentModificationException when packet is encoded:
         Packets.sendToServer(new LecternEditBookC2SP(getMenu().getLecternPos(), new ArrayList<>(pages), Optional.ofNullable(title)));
     }
 
-    // --
-
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderPageTooltip(guiGraphics, mouseX, mouseY);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+        super.render(poseStack, mouseX, mouseY, partialTick);
+        renderPageTooltip(poseStack, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLeftPageNumber(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, int currentSpread, int color) {
+    protected void renderLeftPageNumber(PoseStack poseStack, int mouseX, int mouseY, float partialTick, int currentSpread, int color) {
         if (isRightPage(getMenu().getPage()) && isHoveringOverLeftPageNumber(mouseX, mouseY)) {
             color = textColor;
         }
-        super.renderLeftPageNumber(guiGraphics, mouseX, mouseY, partialTick, currentSpread, color);
+        super.renderLeftPageNumber(poseStack, mouseX, mouseY, partialTick, currentSpread, color);
     }
 
     @Override
-    protected void renderRightPageNumber(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, int currentSpread, int color) {
+    protected void renderRightPageNumber(PoseStack poseStack, int mouseX, int mouseY, float partialTick, int currentSpread, int color) {
         if (isLeftPage(getMenu().getPage()) && isHoveringOverRightPageNumber(mouseX, mouseY)) {
             color = textColor;
         }
-        super.renderRightPageNumber(guiGraphics, mouseX, mouseY, partialTick, currentSpread, color);
+        super.renderRightPageNumber(poseStack, mouseX, mouseY, partialTick, currentSpread, color);
     }
 
-    protected void renderPageTooltip(GuiGraphics guiGraphics, int x, int y) {
+    protected void renderPageTooltip(PoseStack poseStack, int x, int y) {
         int page = getMenu().getPage();
 
         if ((isRightPage(page) && isHoveringOverLeftPageNumber(x, y))
                 || (isLeftPage(page) && isHoveringOverRightPageNumber(x, y))) {
-            guiGraphics.renderTooltip(font, Component.translatable("gui.scholar.lectern.set_current_page"), x, y);
+            renderTooltip(poseStack, Component.translatable("gui.scholar.lectern.set_current_page"), x, y);
         }
     }
 
@@ -164,8 +166,6 @@ public class LecternSpreadBookEditScreen extends SpreadBookEditScreen implements
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
-
-    // --
 
 
     @Override
@@ -185,8 +185,6 @@ public class LecternSpreadBookEditScreen extends SpreadBookEditScreen implements
         super.onClose();
         player.closeContainer();
     }
-
-    // --
 
     protected void sendButtonClick(int buttonId) {
         if (Minecraft.getInstance().gameMode != null) {

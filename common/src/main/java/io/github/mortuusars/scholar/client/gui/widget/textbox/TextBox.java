@@ -2,6 +2,7 @@ package io.github.mortuusars.scholar.client.gui.widget.textbox;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.scholar.client.gui.widget.textbox.display.FormattedStringDisplayCache;
 import io.github.mortuusars.scholar.client.gui.widget.textbox.display.FormattingToolbar;
 import io.github.mortuusars.scholar.client.gui.widget.textbox.display.HorizontalAlignment;
@@ -12,13 +13,11 @@ import io.github.mortuusars.scholar.client.gui.widget.textbox.text.Formatting;
 import io.github.mortuusars.scholar.client.util.Pos2i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -161,13 +160,11 @@ public class TextBox extends AbstractWidget {
         return this;
     }
 
-    // -- Render
-
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         FormattedStringDisplayCache displayCache = getDisplayCache();
 
-        renderLines(guiGraphics, mouseX, mouseY, partialTick, displayCache.getLines(), getCurrentFontColor());
+        renderLines(poseStack, mouseX, mouseY, partialTick, displayCache.getLines(), getCurrentFontColor());
 
         int cursorColor = getCurrentFontColor();
         Formatting currentFormatting = getEditor().getFormattingAtCursor();
@@ -176,29 +173,29 @@ public class TextBox extends AbstractWidget {
             cursorColor = currentFormatting.color().asChatFormatting().getColor() | 0xFF000000;
         }
 
-        renderCursor(guiGraphics, mouseX, mouseY, partialTick, getEditor(), displayCache.getCursor(), cursorColor);
-        renderSelection(guiGraphics, mouseX, mouseY, partialTick, displayCache.getSelection(), getCurrentSelectionColor());
+        renderCursor(poseStack, mouseX, mouseY, partialTick, getEditor(), displayCache.getCursor(), cursorColor);
+        renderSelection(poseStack, mouseX, mouseY, partialTick, displayCache.getSelection(), getCurrentSelectionColor());
 
-        getFormattingToolbar().render(guiGraphics, mouseX, mouseY, partialTick);
+        getFormattingToolbar().render(poseStack, mouseX, mouseY, partialTick);
     }
 
-    public void renderLines(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, List<Line> lines, int color) {
+    public void renderLines(PoseStack poseStack, int mouseX, int mouseY, float partialTick, List<Line> lines, int color) {
         for (Line line : lines) {
-            guiGraphics.drawString(font, line.renderedString(), getX() + line.x(), getY() + line.y(), color, false);
+            font.draw(poseStack, line.renderedString(), x + line.x(), y + line.y(), color);
         }
     }
 
-    public void renderSelection(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, List<Rect2i> selection, int color) {
+    public void renderSelection(PoseStack poseStack, int mouseX, int mouseY, float partialTick, List<Rect2i> selection, int color) {
         for (Rect2i rect : selection) {
-            int x0 = getX() + rect.getX();
-            int y0 = getY() + rect.getY();
+            int x0 = x + rect.getX();
+            int y0 = y + rect.getY();
             int x1 = x0 + rect.getWidth();
             int y1 = y0 + rect.getHeight();
-            guiGraphics.fill(RenderType.guiTextHighlight(), x0, y0, x1, y1, color);
+            fill(poseStack, x0, y0, x1, y1, color);
         }
     }
 
-    public void renderCursor(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, FormattedStringEditor editor, Pos2i cursor, int color) {
+    public void renderCursor(PoseStack poseStack, int mouseX, int mouseY, float partialTick, FormattedStringEditor editor, Pos2i cursor, int color) {
         if (!isFocused()) return;
         if (editor.isSelecting()) return;
         if (System.currentTimeMillis() - lastActionTime > 200 && (System.currentTimeMillis() - lastActionTime) % 600 > 300) // Blinking
@@ -209,23 +206,21 @@ public class TextBox extends AbstractWidget {
             if (cursor.y + font.lineHeight > getHeight()) {
                 int x = line.x() + line.width();
                 int y = line.y();
-                guiGraphics.drawString(getFont(), "<", getX() + x, getY() + y,
-                        color, false);
+                font.draw(poseStack, "<", x + x, y + y, color);
             } else {
-                guiGraphics.drawString(getFont(), "_", getX() + cursor.x, getY() + cursor.y,
-                        color, false);
+                font.draw(poseStack, "_", x + cursor.x, y + cursor.y, color);
             }
         } else {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, 50);
+            poseStack.pushPose();
+            poseStack.translate(0, 0, 50);
             RenderSystem.disableBlend();
-            guiGraphics.fill(
-                    getX() + cursor.x,
-                    getY() + cursor.y - 1,
-                    getX() + cursor.x + 1,
-                    getY() + cursor.y + font.lineHeight,
+            fill(poseStack,
+                    x + cursor.x,
+                    y + cursor.y - 1,
+                    x + cursor.x + 1,
+                    y + cursor.y + font.lineHeight,
                     color);
-            guiGraphics.pose().popPose();
+            poseStack.popPose();
         }
     }
 
@@ -233,9 +228,7 @@ public class TextBox extends AbstractWidget {
         displayCache.scheduleUpdate();
         formattingToolbar.scheduleUpdate();
     }
-
-    // -- Input
-
+    
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (!isFocused() || !isActive() || !visible) return false;
@@ -289,14 +282,18 @@ public class TextBox extends AbstractWidget {
             refreshDisplayCache();
             onTextChanged().accept(getEditor().getString());
             canDrag = false;
+
+            this.setFocused(true);
             return true;
         }
 
         if (isHovered && button == InputConstants.MOUSE_BUTTON_LEFT) {
+            this.setFocused(true);
+
             long currentTime = System.currentTimeMillis();
             FormattedStringDisplayCache display = getDisplayCache();
 
-            int indexAtMousePos = display.getCharIndexAtPosition(font, (int) (mouseX - getX()), (int) (mouseY - getY()));
+            int indexAtMousePos = display.getCharIndexAtPosition(font, (int) (mouseX - x), (int) (mouseY - y));
 
             if (Math.abs(lastClickPos.x - (int) mouseX) < 4 && Math.abs(lastClickPos.y - (int) mouseY) < 4 && currentTime - lastActionTime < 250L) {
                 if (!getEditor().isSelecting()) {
@@ -316,6 +313,8 @@ public class TextBox extends AbstractWidget {
             return true;
         }
 
+        this.setFocused(false);
+
         return false;
     }
 
@@ -323,16 +322,14 @@ public class TextBox extends AbstractWidget {
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if (button == 0 && canDrag) {
             FormattedStringDisplayCache display = getDisplayCache();
-            int indexAtMousePos = display.getCharIndexAtPosition(font, (int) (mouseX - getX()), (int) (mouseY - getY()));
+            int indexAtMousePos = display.getCharIndexAtPosition(font, (int) (mouseX - x), (int) (mouseY - y));
             getEditor().setCursorPos(indexAtMousePos, true);
             refreshDisplayCache();
             return true;
         }
         return false;
     }
-
-    // --
-
+    
     public void changeLine(int yChange) {
         Pos2i cursor = getDisplayCache().getCursor();
         int x = cursor.x;
@@ -363,16 +360,19 @@ public class TextBox extends AbstractWidget {
             getEditor().setCursorPos(line.lastCharIndex() + 1, Screen.hasShiftDown());
         }
     }
-
-    // --
-
+    
     @Override
     public @NotNull Component getMessage() {
         return Component.literal(getEditor().getString().toStringWithoutFormatting());
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.TITLE, createNarrationMessage());
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+        super.setFocused(focused);
     }
 }

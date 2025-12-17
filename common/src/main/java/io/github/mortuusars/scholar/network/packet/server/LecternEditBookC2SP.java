@@ -68,7 +68,7 @@ public record LecternEditBookC2SP(BlockPos lecternPos, List<String> pages, Optio
             return true;
         }
 
-        if (!(player.level().getBlockEntity(lecternPos) instanceof LecternBlockEntity lecternBlockEntity)) {
+        if (!(player.level.getBlockEntity(lecternPos) instanceof LecternBlockEntity lecternBlockEntity)) {
             Scholar.LOGGER.error("Cannot update lectern book: no lectern block entity at lecternPos '{}'", lecternPos);
             return false;
         }
@@ -137,7 +137,7 @@ public record LecternEditBookC2SP(BlockPos lecternPos, List<String> pages, Optio
 
     private <T, R> CompletableFuture<R> filterTextPacket(ServerPlayer player, T message, BiFunction<TextFilter, T, CompletableFuture<R>> processor) {
         return processor.apply(player.getTextFilter(), message).thenApply(object -> {
-            if (!player.connection.isAcceptingMessages()) {
+            if (!player.connection.connection.isConnected()) {
                 Scholar.LOGGER.debug("Ignoring packet due to disconnection");
                 throw new CancellationException("disconnected");
             }

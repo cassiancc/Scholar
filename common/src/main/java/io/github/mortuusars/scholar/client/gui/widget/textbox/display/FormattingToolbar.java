@@ -1,13 +1,15 @@
 package io.github.mortuusars.scholar.client.gui.widget.textbox.display;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.scholar.Scholar;
 import io.github.mortuusars.scholar.client.gui.widget.textbox.TextBox;
 import io.github.mortuusars.scholar.client.gui.widget.textbox.text.Formatting;
 import io.github.mortuusars.scholar.client.util.Pos2i;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -18,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class FormattingToolbar {
+public class FormattingToolbar extends GuiComponent {
     public static final ResourceLocation TEXTURE = Scholar.resource("textures/gui/formatting_toolbar.png");
 
     public static final Map<Character, String> HOTKEYS = new HashMap<>();
@@ -98,8 +100,6 @@ public class FormattingToolbar {
         height = buttons.stream().mapToInt(button -> button.area().getY() + button.area.getHeight()).max().orElse(0);
     }
 
-    // --
-
     public TextBox getTextBox() {
         return textBox;
     }
@@ -130,8 +130,6 @@ public class FormattingToolbar {
         return this;
     }
 
-    // --
-
     public boolean shouldUpdate() {
         return shouldUpdate;
     }
@@ -154,17 +152,17 @@ public class FormattingToolbar {
         this.shouldUpdate = false;
     }
 
-    // -- Render
-
     public boolean shouldShow() {
         return getTextBox().isFocused() && getTextBox().getEditor().isSelecting();
     }
 
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         if (!isVisible() || !shouldShow()) return;
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 500);
+        poseStack.pushPose();
+        poseStack.translate(0, 0, 500);
+
+        RenderSystem.setShaderTexture(0, TEXTURE);
 
         @Nullable FormattingButton hoveredButton = null;
 
@@ -184,7 +182,7 @@ public class FormattingToolbar {
                 }
             }
 
-            guiGraphics.blit(TEXTURE, x + button.area.getX(), y + button.area.getY(),
+            blit(poseStack, x + button.area.getX(), y + button.area.getY(),
                     button.uv.x, button.uv.y + vOffset, button.area.getWidth(), button.area.getHeight());
         }
 
@@ -192,13 +190,14 @@ public class FormattingToolbar {
             MutableComponent component = Component.translatable(
                             "gui.scholar.formatting." + hoveredButton.formatting.getName())
                     .append(" §8" + HOTKEYS.getOrDefault(hoveredButton.formatting.getChar(), ""));
-            guiGraphics.renderTooltip(Minecraft.getInstance().font, component, mouseX, mouseY + 20);
+
+            if (Minecraft.getInstance().screen != null) {
+                Minecraft.getInstance().screen.renderTooltip(poseStack, component, mouseX, mouseY + 20);
+            }
         }
 
-        guiGraphics.pose().popPose();
+        poseStack.popPose();
     }
-
-    // -- Input
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         return false;
@@ -210,7 +209,7 @@ public class FormattingToolbar {
                 if (formattingButton.isHovering((int) (mouseX - x), (int) (mouseY - y))) {
                     getTextBox().getEditor().applyFormatting(Formatting.of(formattingButton.formatting()));
                     Minecraft.getInstance().getSoundManager().play(
-                            SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1, 0.3f));
+                            SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1, 0.3f));
                     return true;
                 }
             }
@@ -230,8 +229,8 @@ public class FormattingToolbar {
                     .min()
                     .orElse(0);
 
-            int x = textBox.getX() + HorizontalAlignment.CENTER.align(textBox.getWidth(), toolbar.getWidth());
-            int y = textBox.getY() + selectionStartY - textBox.getFont().lineHeight - toolbar.getHeight();
+            int x = textBox.x + HorizontalAlignment.CENTER.align(textBox.getWidth(), toolbar.getWidth());
+            int y = textBox.y + selectionStartY - textBox.getFont().lineHeight - toolbar.getHeight();
             return new Pos2i(x, y);
         };
     }

@@ -1,7 +1,6 @@
 package io.github.mortuusars.scholar.client.resource;
 
 import io.github.mortuusars.scholar.Scholar;
-import io.github.mortuusars.scholar.integration.Mods;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,24 +14,6 @@ public class BuiltInResourcePacks {
                 Scholar.resource("colored_books"),
                 Component.translatable("resourcepack.scholar.colored_books.name"),
                 new Activation(ActivationType.DEFAULT_ENABLED)));
-        packs.add(new Pack(
-                Scholar.resource("chiseled_bookshelf_colored_books"),
-                Component.translatable("resourcepack.scholar.chiseled_bookshelf_colored_books.name"),
-                new Activation(ActivationType.DEFAULT_ENABLED)));
-
-        if (Mods.MCBV.isLoading()) {
-            packs.add(new Pack(
-                    Scholar.resource("chiseled_bookshelf_colored_books_lolmcbv_compat"),
-                    Component.translatable("resourcepack.scholar.chiseled_bookshelf_colored_books_lolmcbv_compat.name"),
-                    new Activation(ActivationType.DEFAULT_ENABLED)));
-        }
-
-        if (Mods.WOODWORKS.isLoading()) {
-            packs.add(new Pack(
-                    Scholar.resource("chiseled_bookshelf_colored_books_abnww_compat"),
-                    Component.translatable("resourcepack.scholar.chiseled_bookshelf_colored_books_abnww_compat.name"),
-                    new Activation(ActivationType.DEFAULT_ENABLED)));
-        }
 
         return packs;
     }
