@@ -163,20 +163,34 @@ public class SpreadBookEditScreen extends SpreadBookScreen {
         importBookButton = new ImageButton(leftPos + 297, topPos + 16, 18, 18, 387, 0,
                 18, TEXTURE, 512, 512,
                 b -> importBook(Screen.hasShiftDown()),
-                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("gui.scholar.import_book")
-                        .append(ScholarClient.KeyMappings.componentForTooltip(ScholarClient.KeyMappings.importBook))
-                        .append(CommonComponents.NEW_LINE)
-                        .append(Component.translatable("gui.scholar.import_book.tooltip")), x, y),
+                (b, poseStack, x, y) -> {
+                    List<net.minecraft.util.FormattedCharSequence> tooltip = new ArrayList<>();
+
+                    tooltip.add(Component.translatable("gui.scholar.import_book")
+                            .append(ScholarClient.KeyMappings.componentForTooltip(ScholarClient.KeyMappings.importBook))
+                            .getVisualOrderText());
+
+                    tooltip.addAll(font.split(Component.translatable("gui.scholar.import_book.tooltip"), 200));
+
+                    renderTooltip(poseStack, tooltip, x, y);
+                },
                 Component.translatable("gui.scholar.import_book"));
         addRenderableWidget(importBookButton);
 
         exportBookButton = new ImageButton(leftPos + 297, topPos + 41, 18, 18, 369, 0,
                 18, TEXTURE, 512, 512,
                 b -> exportBook(Screen.hasShiftDown()),
-                (b, poseStack, x, y) -> renderTooltip(poseStack, Component.translatable("gui.scholar.export_book")
-                        .append(ScholarClient.KeyMappings.componentForTooltip(ScholarClient.KeyMappings.exportBook))
-                        .append(CommonComponents.NEW_LINE)
-                        .append(Component.translatable("gui.scholar.export_book.tooltip")), x, y),
+                (b, poseStack, x, y) -> {
+                    List<net.minecraft.util.FormattedCharSequence> tooltip = new ArrayList<>();
+
+                    tooltip.add(Component.translatable("gui.scholar.export_book")
+                            .append(ScholarClient.KeyMappings.componentForTooltip(ScholarClient.KeyMappings.exportBook))
+                            .getVisualOrderText());
+
+                    tooltip.addAll(font.split(Component.translatable("gui.scholar.export_book.tooltip"), 200));
+
+                    renderTooltip(poseStack, tooltip, x, y);
+                },
                 Component.translatable("gui.scholar.export_book"));
         addRenderableWidget(exportBookButton);
     }
