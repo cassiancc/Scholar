@@ -7,65 +7,58 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class Config {
     public static class Common {
         public static final ForgeConfigSpec SPEC;
-
         // Coloring
         public static final ForgeConfigSpec.BooleanValue WRITABLE_BOOK_COLORING;
         public static final ForgeConfigSpec.BooleanValue WRITTEN_BOOK_COLORING;
 
         // UI
-        public static final ForgeConfigSpec.BooleanValue TWO_PAGE_SCREEN;
-        public static final ForgeConfigSpec.BooleanValue LECTERN_TWO_PAGE_SCREEN;
-        public static final ForgeConfigSpec.BooleanValue SNEAK_OPENS_VANILLA_SCREEN;
-        public static final ForgeConfigSpec.BooleanValue SURVIVAL_FORMATTING;
+        public static final ForgeConfigSpec.BooleanValue IN_HAND_TWO_PAGE_BOOK_SCREEN;
+        public static final ForgeConfigSpec.BooleanValue LECTERN_TWO_PAGE_BOOK_SCREEN;
+        public static final ForgeConfigSpec.BooleanValue SNEAK_OPENS_VANILLA_BOOK_SCREEN;
 
-        // QOL
+        // Misc
+        public static final ForgeConfigSpec.BooleanValue CHISELED_BOOKSHELF_COLORS;
         public static final ForgeConfigSpec.BooleanValue CHISELED_BOOKSHELF_TOOLTIP;
         public static final ForgeConfigSpec.BooleanValue BOOK_ENCHANTMENT_GLINT;
 
         static {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
-            builder.push("BookColoring");
+            builder.push("ui");
+            IN_HAND_TWO_PAGE_BOOK_SCREEN = builder
+                    .comment("Vanilla book view/edit screens will be replaced with Scholar's two-paged view/edit screens. Default: true")
+                    .define("in_hand_two_page_book_screens", true);
+            LECTERN_TWO_PAGE_BOOK_SCREEN = builder
+                    .comment("Vanilla lectern book view screen will be replaced with Scholar's two-paged view/edit screens.",
+                            "Can be disabled if you want to use different screen for lectern (such as from Amendments (but Scholar now has lectern editing, so...)). Default: true")
+                    .define("lectern_two_page_book_screens", true);
+            SNEAK_OPENS_VANILLA_BOOK_SCREEN = builder
+                    .comment("Holding sneak while opening a book screen will show vanilla screen. Default: false")
+                    .define("sneaking_opens_vanilla_book_screen", false);
+            builder.pop();
+
+            builder.push("book_coloring");
             WRITABLE_BOOK_COLORING = builder
                     .comment("Writable Book (Book and Quill) can be colored like Leather armor. Default: true")
-                    .define("WritableBookColoring", true);
+                    .define("writable_book_coloring", true);
             WRITTEN_BOOK_COLORING = builder
                     .comment("Written Book can be colored like Leather armor. Default: false")
-                    .define("WrittenBookColoring", false);
+                    .define("written_book_coloring", false);
             builder.pop();
 
-            builder.push("UI");
-            TWO_PAGE_SCREEN = builder
-                    .comment("Vanilla book screens will be replaced with a two-paged ones. Default: true")
-                    .define("TwoPageScreen", true);
-            LECTERN_TWO_PAGE_SCREEN = builder
-                    .comment("Lectern book screen will replace the vanilla one. Can be disabled if you want to use different screen for lectern (such as from Amendments). Default: true")
-                    .define("LecternTwoPageScreen", true);
-            SNEAK_OPENS_VANILLA_SCREEN = builder
-                    .comment("Holding sneak while using a book screen will show vanilla screen. Default: false")
-                    .define("SneakingOpensVanillaScreen", false);
-            SURVIVAL_FORMATTING = builder
-                    .comment("Allow inserting formatting symbol (section sign) for players in survival mode." +
-                                    "When set to true - hotkey or a button can be used to paste a formatting symbol.",
-                            "Default: true")
-                    .define("SurvivalFormatting", true);
-            builder.pop();
-
-            builder.push("QOL");
+            builder.push("misc");
+            CHISELED_BOOKSHELF_COLORS = builder
+                    .comment("Colored books in Chiseled Bookshelf will have correct colors displayed on the block. Default: true",
+                            "Note: resourepacks that modify Chiseled Bookshelf may break the coloring.",
+                            "Note 2: even if this setting is disabled - bookshelf will not look quite the same if you look closely.",
+                            "To restore fully - overwrite bookshelf slot models added by Scholar using a resourcepack.")
+                    .define("chiseled_bookshelf_colors", true);
             CHISELED_BOOKSHELF_TOOLTIP = builder
                     .comment("Hovering over a slot in a Chiseled Bookshelf will show tooltip of a book that's stored in that slot. Default: true")
-                    .define("ChiseledBookshelfTooltip", true);
+                    .define("chiseled_bookshelf_tooltip", true);
             BOOK_ENCHANTMENT_GLINT = builder
                     .comment("Written books will have an enchantment glint on them. Default: false")
-                    .define("EnchantmentGlint", false);
-            builder.pop();
-
-            builder.push("LecternScreen");
-
-            builder.pop();
-
-            builder.push("Misc");
-
+                    .define("written_book_enchantment_glint", false);
             builder.pop();
 
             SPEC = builder.build();
@@ -75,82 +68,77 @@ public class Config {
     public static class Client {
         public static final ForgeConfigSpec SPEC;
 
-        public static final ForgeConfigSpec.ConfigValue<String> MAIN_FONT_COLOR;
-        public static final ForgeConfigSpec.ConfigValue<String> SECONDARY_FONT_COLOR;
-        public static final ForgeConfigSpec.ConfigValue<String> ENTER_TITLE_FONT_COLOR;
-        public static final ForgeConfigSpec.ConfigValue<String> BY_AUTHOR_FONT_COLOR;
+        // UI
+        public static final ForgeConfigSpec.BooleanValue SCREEN_PAUSE;
+        public static final ForgeConfigSpec.BooleanValue SHOW_DONE_BUTTON;
+        public static final ForgeConfigSpec.BooleanValue EDIT_SCREEN_SHOW_EXTRA_TOOLS;
 
-        public static final ForgeConfigSpec.BooleanValue WRITABLE_SHOW_DONE_BUTTON;
-        public static final ForgeConfigSpec.BooleanValue WRITABLE_PAUSE;
-
-        public static final ForgeConfigSpec.BooleanValue WRITTEN_SHOW_DONE_BUTTON;
-        public static final ForgeConfigSpec.BooleanValue WRITTEN_PAUSE;
-
-        public static final ForgeConfigSpec.BooleanValue LECTERN_SHOW_DONE_BUTTON;
-        public static final ForgeConfigSpec.BooleanValue LECTERN_PAUSE;
+        // Colors
+        public static final ForgeConfigSpec.ConfigValue<String> TEXT_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> PAGE_NUMBERS_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> ENTER_TITLE_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> BY_AUTHOR_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> SELECTION_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> SELECTION_UNFOCUSED_COLOR;
 
         static {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
-            String defaultMainFontColor = "FF7B593D";
-            MAIN_FONT_COLOR = builder
-                    .comment("Color of the book text. Default: " + defaultMainFontColor)
-                    .define("MainFontColor", defaultMainFontColor);
+            {
+                builder.push("ui");
 
-            String defaultSecondaryFontColor = "FFEFE4CA";
-            SECONDARY_FONT_COLOR = builder
-                    .comment("Color of the secondary text (page numbers, etc). Default: " + defaultSecondaryFontColor)
-                    .define("SecondaryFontColor", defaultSecondaryFontColor);
+                SCREEN_PAUSE = builder
+                        .comment("Singleplayer game will be paused when book edit/view screen is open.",
+                                "Default: false, Vanilla: true")
+                        .define("book_screen_pause", false);
 
-            String defaultEnterTitleFontColor = "FFF5EBD0";
-            ENTER_TITLE_FONT_COLOR = builder
-                    .comment("Color of the 'Enter Book Title' text on a signing screen. Default: " + defaultEnterTitleFontColor)
-                    .define("EnterTitleFontColor", defaultEnterTitleFontColor);
+                SHOW_DONE_BUTTON = builder
+                        .comment("Show 'Done' button in the Scholar book screens. Default: false")
+                        .define("book_screen_show_done_button", false);
 
-            String defaultByAuthorFontColor = "FFC7B496";
-            BY_AUTHOR_FONT_COLOR = builder
-                    .comment("Color of the 'by <author>' text on a signing screen. Default: " + defaultByAuthorFontColor)
-                    .define("ByAuthorFontColor", defaultByAuthorFontColor);
+                EDIT_SCREEN_SHOW_EXTRA_TOOLS = builder
+                        .comment("Additional tool buttons will be shown in book edit screen.",
+                                "This setting can be toggled in-game by pressing F1 button (by default) or clicking on question mark in top right corner. Initial value: false")
+                        .define("book_edit_screen_show_extra_tools", false);
 
+                {
+                    builder.push("colors");
 
-            builder.push("WritableBookScreen");
-            WRITABLE_SHOW_DONE_BUTTON = builder
-                    .comment("Show 'Done' button in the Scholar book edit screen. Default: false")
-                    .define("ShowDoneButton", false);
+                    String defaultMainFontColor = "FF7B593D";
+                    TEXT_COLOR = builder
+                            .comment("Color of the book text. Default: " + defaultMainFontColor)
+                            .define("text_color", defaultMainFontColor);
 
-            WRITABLE_PAUSE = builder
-                    .comment("Singleplayer game will be paused when book edit screen is open.",
-                            "This will affect vanilla book edit screen as well",
-                            "Set to 'true' to restore vanilla behavior.",
-                            "Default: false")
-                    .define("Pause", false);
-            builder.pop();
+                    String pageNumberFontColor = "FFEFE4CA";
+                    PAGE_NUMBERS_COLOR = builder
+                            .comment("Color of the page numbers. Default: " + pageNumberFontColor)
+                            .define("page_numbers_color", pageNumberFontColor);
 
-            builder.push("WrittenBookScreen");
-            WRITTEN_SHOW_DONE_BUTTON = builder
-                    .comment("Show 'Done' button in the Scholar book view screen. Default: false")
-                    .define("ShowDoneButton", false);
+                    String defaultEnterTitleFontColor = "FFF5EBD0";
+                    ENTER_TITLE_COLOR = builder
+                            .comment("Color of the 'Enter Book Title' text in the signing screen. Default: " + defaultEnterTitleFontColor)
+                            .define("enter_title_color", defaultEnterTitleFontColor);
 
-            WRITTEN_PAUSE = builder
-                    .comment("Singleplayer game will be paused when book view screen is open.",
-                            "This will affect vanilla book view screen as well",
-                            "Set to 'true' to restore vanilla behavior.",
-                            "Default: false")
-                    .define("Pause", false);
-            builder.pop();
+                    String defaultByAuthorFontColor = "FFC7B496";
+                    BY_AUTHOR_COLOR = builder
+                            .comment("Color of the 'by <author>' text in the signing screen. Default: " + defaultByAuthorFontColor)
+                            .define("by_author_color", defaultByAuthorFontColor);
 
-            builder.push("LecternScreen");
-            LECTERN_SHOW_DONE_BUTTON = builder
-                    .comment("Show 'Done' button in the Scholar lectern screen. Default: false")
-                    .define("ShowDoneButton", false);
+                    String selectionColor = "FF664488";
+                    SELECTION_COLOR = builder
+                            .comment("Color of the selection. Default: " + selectionColor)
+                            .define("selection_color", selectionColor);
 
-            LECTERN_PAUSE = builder
-                    .comment("Singleplayer game will be paused when lectern screen is open.",
-                            "This will affect vanilla lectern screen as well",
-                            "Set to 'true' to restore vanilla behavior.",
-                            "Default: false")
-                    .define("Pause", false);
-            builder.pop();
+                    String selectionUnfocusedColor = "FF827B88";
+                    SELECTION_UNFOCUSED_COLOR = builder
+                            .comment("Color of the selection when text box is not focused. Default: " + selectionUnfocusedColor)
+                            .define("selection_unfocused_color", selectionUnfocusedColor);
+
+                    builder.pop();
+                }
+
+                builder.pop();
+            }
 
             SPEC = builder.build();
         }

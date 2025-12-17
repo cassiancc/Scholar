@@ -8,7 +8,7 @@
     "${mod_authors}"
   ],
   "contact": {
-    "homepage": "${mod_homepage}",
+    "homepage": "${mod_page}",
     "sources": "${mod_github}"
   },
   "license": "${mod_license}",
@@ -26,7 +26,7 @@
     ]
   },
   "mixins": [
-    "common.mixins.scholar.json"
+    "scholar-common.mixins.json"
   ],
   "depends": {
     "minecraft": "=1.19.2",

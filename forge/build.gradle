@@ -14,7 +14,8 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig "common.mixins.scholar.json"
+        mixinConfig "scholar-common.mixins.json"
+        mixinConfig "scholar-forge.mixins.json"
     }
 
     runs {
@@ -49,32 +50,13 @@ dependencies {
     modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}") { transitive = false }
 
+    modImplementation("maven.modrinth:blueprint:z4m8zvm5")
+    modImplementation("maven.modrinth:woodworks:236Amnif")
+
+    modRuntimeOnly("maven.modrinth:embeddium:0.3.31+mc1.20.1")
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
-}
-
-processResources {
-    // input variables of this task:
-    var replaceProperties = [
-            minecraft_version    : minecraft_version,
-            minecraft_version_range    : minecraft_version_range,
-            loader_version_range  : loader_version_range,
-            forge_version_range   : forge_version_range,
-            mod_id               : mod_id,
-            mod_name             : mod_name,
-            mod_version          : mod_version,
-            mod_license          : mod_license,
-            mod_authors          : mod_authors,
-            mod_description      : mod_description,
-            mod_homepage         : mod_homepage,
-            mod_github           : mod_github,
-    ]
-    // setting them as input
-    inputs.properties replaceProperties
-
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'update.json']) {
-        expand replaceProperties + [project: project]
-    }
 }
 
 shadowJar {
@@ -100,19 +82,5 @@ sourcesJar {
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
-    }
-}
-
-publishing {
-    publications {
-        mavenForge(MavenPublication) {
-            artifactId = rootProject.mod_id + "-" + project.name
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
     }
 }
