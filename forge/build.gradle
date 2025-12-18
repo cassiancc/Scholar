@@ -14,7 +14,8 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig "common.mixins.scholar.json"
+        mixinConfig "scholar-common.mixins.json"
+        mixinConfig "scholar-forge.mixins.json"
     }
 
     runs {

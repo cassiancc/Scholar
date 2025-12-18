@@ -3,7 +3,9 @@ package io.github.mortuusars.scholar.fabric;
 import net.minecraftforge.api.ModLoadingContext;
 import io.github.mortuusars.scholar.Config;
 import io.github.mortuusars.scholar.Scholar;
+import io.github.mortuusars.scholar.network.fabric.PacketsImpl;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.world.item.*;
 import net.minecraftforge.fml.config.ModConfig;
@@ -23,5 +25,9 @@ public class ScholarFabric implements ModInitializer {
         if (Config.Common.WRITTEN_BOOK_COLORING.get()) {
             CauldronInteraction.WATER.put(Items.WRITTEN_BOOK, CauldronInteraction.DYED_ITEM);
         }
+
+        ServerLifecycleEvents.SERVER_STARTING.register(PacketsImpl::onServerStarting);
+        ServerLifecycleEvents.SERVER_STOPPED.register(PacketsImpl::onServerStopped);
+        PacketsImpl.registerC2SPackets();
     }
 }
