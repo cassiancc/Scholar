@@ -80,8 +80,5 @@
   "key.scholar.import_book": "Import Book",
   "key.scholar.toggle_book_tools": "Toggle Extra Editing Tools",
   "subtitle.scholar.book.signed": "Book signing scribbles",
-  "resourcepack.scholar.colored_books.name": "Scholar: Colored Books",
-  "resourcepack.scholar.chiseled_bookshelf_colored_books.name": "Scholar: Chiseled Bookshelf Colored Books",
-  "resourcepack.scholar.chiseled_bookshelf_colored_books_lolmcbv_compat.name": "Scholar: MCBV Colored Books compat",
-  "resourcepack.scholar.chiseled_bookshelf_colored_books_abnww_compat.name": "Scholar: Woodworks Colored Books compat"
+  "resourcepack.scholar.colored_books.name": "Scholar: Colored Books"
 }

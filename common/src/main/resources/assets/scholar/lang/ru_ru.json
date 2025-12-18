@@ -80,9 +80,5 @@
   "key.scholar.import_book": "Импорт книги",
   "key.scholar.toggle_book_tools": "Переключить инструменты редактирования",
   "subtitle.scholar.book.signed": "Подписание книги",
-  "resourcepack.scholar.colored_books.name": "Scholar: цветные книги",
-  "resourcepack.scholar.chiseled_bookshelf_colored_books.name": "Scholar: цветные книги в резной книжной полке",
-  "resourcepack.scholar.chiseled_bookshelf_colored_books_lolmcbv_compat.name": "Scholar: совместимость с цветными книгами MCBV",
-  "resourcepack.scholar.chiseled_bookshelf_colored_books_abnww_compat.name": "Scholar: совместимость с цветными книгами Woodworks",
-  "resourcepack.scholar.chiseled_bookshelf_colored_books_woodster_compat.name": "Scholar: совместимость с цветными книгами Woodster"
+  "resourcepack.scholar.colored_books.name": "Scholar: цветные книги"
 }
